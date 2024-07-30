@@ -1,0 +1,42 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+.headerUser {
+    background-color: #0E6EFC;
+    height: 60px;
+    line-height: 60px;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+}
+
+
+.navigatorHeaderUser {
+    display: flex;
+    
+}
+
+.navigatorHeaderUser li {
+    list-style-type: none;
+    display: inline-block;
+    padding: 0 20px;
+}
+
+.navigatorHeaderUser a {
+    text-decoration: none;
+    color: white;
+}
+
+.navigatorHeaderUser li:hover {
+    background-color: red;
+    cursor: pointer;
+}
+
+.active {
+    font-weight: bold; /* Hoặc bạn có thể thêm các kiểu dáng khác */
+    color: black; /* Thay đổi màu sắc nếu cần */
+}

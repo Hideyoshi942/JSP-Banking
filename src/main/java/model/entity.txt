@@ -1,0 +1,50 @@
+Bảng Users
+user_id: Số định danh người dùng (Primary Key)
+username: Tên đăng nhập
+password: Mật khẩu
+email: Email
+phone_number: Số điện thoại
+created_at: Ngày tạo
+type_user: Loại tài khoản
+verification_code: Mã xác thực
+code_validity_period: Thời gian hiệu lực của mã
+authentication_status: Trạng thái xác thực
+comfirm_password: Xac nhan mat khau
+agree_term: Dong y dieu khoan
+
+Bảng Accounts
+account_id: Số định danh tài khoản (Primary Key)
+user_id: Số định danh người dùng (Foreign Key)
+account_number: Số tài khoản
+account_type: Loại tài khoản (Saving, Checking)
+balance: Số dư
+created_at: Ngày tạo
+
+Bảng Transactions
+transaction_id: Số định danh giao dịch (Primary Key)
+account_id: Số định danh tài khoản (Foreign Key)
+transaction_type: Loại giao dịch (Credit, Debit)
+amount: Số tiền
+transaction_date: Ngày giao dịch
+beneficiary_id: Số định danh người thụ hưởng (Foreign Key, có thể NULL)
+
+Bảng Beneficiaries
+beneficiary_id: Số định danh người thụ hưởng (Primary Key)
+user_id: Số định danh người dùng (Foreign Key)
+name: Tên người thụ hưởng
+account_number: Số tài khoản người thụ hưởng
+bank_name: Tên ngân hàng người thụ hưởng
+
+Bảng Services
+service_id: Số định danh dịch vụ (Primary Key)
+service_name: Tên dịch vụ
+description: Mô tả dịch vụ
+fee: Phí dịch vụ
+
+Bảng Loans
+loan_id: Số định danh khoản vay (Primary Key)
+user_id: Số định danh người dùng (Foreign Key)
+loan_amount: Số tiền vay
+interest_rate: Lãi suất
+start_date: Ngày bắt đầu vay
+end_date: Ngày kết thúc vay

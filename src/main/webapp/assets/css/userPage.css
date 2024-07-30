@@ -1,0 +1,54 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-image: url(../img/background_user.jpg);
+    height: 100%;
+    width: 100%;
+    background-size: cover;
+}
+
+.boderItemUser a {
+    text-decoration: none;
+    color: black;
+    font-size: 24px;
+}
+
+i {
+    color: rgb(42, 115, 233);
+    font-size: 50px;
+}
+
+.mainUser {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin-left: 35%;
+}
+
+.boxMainUser {
+    background-color: white;
+    height: auto;
+    width: 500px;
+    border-radius: 10%;
+    padding: 20px;
+}
+
+.boxItemsUser {
+    padding: 15px 15px 15px 0;
+}
+
+
+.boderItemUser {
+    justify-content: center;
+    align-items: center;
+    height: 150px;
+    width: 150px;
+    border: 1px solid grey;
+    border-radius: 10px;
+    padding: 10px;
+}

@@ -1,0 +1,61 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/*id-footer*/
+.id-footer {
+  background: #EBEBEB;
+  height: 350px;
+}
+
+.id-footer_product-title p {
+  font-size: 20px;
+  font-weight: bold;
+  margin-left: 30px;
+  color: #545454;
+}
+
+.id-footer-list li:hover a {
+  color: blue;
+}
+
+/*about-footer*/
+.about-footer {
+  height: 50px;
+  background: blue;
+  line-height: 50px;
+}
+
+.footer-link-list li {
+  display: inline-block;
+  border-right: 1px solid white;
+  line-height: 30px;
+}
+
+.footer-link-list li a {
+  color: white;
+  padding: 0 10px;
+}
+
+ul li {
+  list-style-type: none;
+}
+
+li a{
+  color: #7C7C7C;
+  text-decoration: none;
+  text-transform: uppercase;
+  font-weight: 500;
+  font-size: 14px;
+  text-align: justify;
+}
+
+.footer-link-list li:last-child {
+  border-right: none;
+}
+
+.footer-text-about p {
+  color: white;
+}
