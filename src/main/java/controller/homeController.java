@@ -6,6 +6,7 @@ import java.sql.Date;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Calendar;
+import java.util.Objects;
 import java.util.Random;
 import javax.servlet.*;
 import javax.servlet.http.*;
@@ -32,8 +33,13 @@ public class homeController extends HttpServlet {
       xacThuc(request, response);
     } else if (hanhDong.equals("quen-mat-khau")) {
       quenMatKhau(request, response);
+    } else if (hanhDong.equals("dang-xuat")) {
+      dangXuat(request, response);
+    } else if (hanhDong.equals("doi-mat-khau")) {
+      doiMatKhau(request, response);
     }
   }
+
 
 
   @Override
@@ -228,6 +234,68 @@ public class homeController extends HttpServlet {
 
   }
 
+  private void doiMatKhau(HttpServletRequest request, HttpServletResponse response) {
+    try {
+      String old_password = request.getParameter("current-password");
+      String new_password = request.getParameter("new-password");
+      String confirm_password = request.getParameter("confirm-password");
+      String verification_code = request.getParameter("verification-code");
+
+      old_password = MaHoa.toSHA1(old_password);
+      new_password = MaHoa.toSHA1(new_password);
+      confirm_password = MaHoa.toSHA1(confirm_password);
+
+      String baoLoi = "";
+
+      HttpSession session = request.getSession();
+      Object obj = session.getAttribute("us");
+      user us = null;
+      if (obj != null) {
+        us = (user) obj;
+      }
+
+      if (us == null) {
+        baoLoi = "Vui lòng đăng nhập.";
+      } else {
+        if (!old_password.equals(us.getPassword())) {
+          baoLoi = "Mật khẩu hiện tại không đúng.";
+        } else if (!new_password.equals(confirm_password)) {
+          baoLoi = "Xác nhận mật khẩu không đúng.";
+        } else if (verification_code != null && verification_code.equals(us.getVerification_code())) {
+          userDAO uDAO = new userDAO();
+          us.setPassword(new_password);
+          if (uDAO.updatePassword(us)) {
+            baoLoi = "Đổi mật khẩu thành công.";
+          } else {
+            baoLoi = "Đổi mật khẩu thất bại.";
+          }
+        } else {
+          baoLoi = "Mã xác thực không đúng.";
+        }
+
+        if (baoLoi.isEmpty()) {
+          String generatedCode = getMaDoiMatKhau(us);
+          us.setVerification_code(generatedCode);
+          session.setAttribute("us", us);
+
+          Email.sendEmail(us.getEmail(), "Mã Xác Thực", generatedCode);
+          baoLoi = "Mã xác thực đã được gửi qua email.";
+
+          request.setAttribute("current-password", request.getParameter("current-password"));
+          request.setAttribute("new-password", request.getParameter("new-password"));
+          request.setAttribute("confirm-password", request.getParameter("confirm-password"));
+        }
+      }
+
+      request.setAttribute("baoLoi", baoLoi);
+      RequestDispatcher rd = getServletContext().getRequestDispatcher("/userPage/doimatkhau.jsp");
+      rd.forward(request, response);
+    } catch (ServletException | IOException e) {
+      e.printStackTrace();
+    }
+  }
+
+
 
   public static String getNoiDungEmailXacThuc(user u) {
     String link = "http://localhost:8080/JSP_Banking_war/khach-hang?hanhDong=xac-thuc&user_id=" + u.getUser_id() + "&verification_code=" + u.getVerification_code();
@@ -249,6 +317,16 @@ public class homeController extends HttpServlet {
     String noiDung = "Xin chao, <b>" + u.getUsername() + "</b> <br/>"
         + "Yeu cau cap lai mat khau cua ban da duoc chap thuan <br/>"
         + "Day la mat khau moi cua ban: " + matKhauMoi + "<br/>"
+        + "Xin tran trong cam on";
+    return noiDung;
+  }
+
+  public static String getMaDoiMatKhau(user u) {
+    SoNgauNhien snn = new SoNgauNhien();
+    String maXacNhan = snn.getSoNgauNhien();
+    u.setVerification_code(maXacNhan);
+    String noiDung = "Xin chao, <b>" + u.getUsername() + "</b> <br/>"
+        + "Ma xac nhan cua ban la: " + maXacNhan + "<br/>"
         + "Xin tran trong cam on";
     return noiDung;
   }

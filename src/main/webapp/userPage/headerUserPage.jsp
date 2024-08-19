@@ -1,4 +1,4 @@
-<%--
+<%@ page import="model.user" %><%--
   Created by IntelliJ IDEA.
   User: Admin
   Date: 7/30/2024
@@ -8,25 +8,38 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <link rel="stylesheet" href="/JSP_Banking_war/assets/css/bootstrap.min.css">
 <link rel="stylesheet" href="/JSP_Banking_war/assets/css/headerUser.css">
+<%
+    String url = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort()
+            + request.getContextPath();
+%>
 <header>
     <div class="headerUser">
         <div class="container">
+            <%
+                Object obj = session.getAttribute("us");
+                user u = null;
+                if (obj!=null)
+                    u = (user)obj;
+
+                if(u!=null){
+            %>
             <div class="row navigatorHeaderUser">
                 <div class="leftHeaderUser col-sm-8">
                     <ul class="leftItemsUser">
                         <li><a href="#">JSP-Banking</a></li>
                         <li><a href="#">Bảng biểu</a></li>
                         <li><a href="#">Lịch sử giao dịch</a></li>
-                        <li><a href="#">Thông tin cá nhân</a></li>
+                        <li><a href="<%=url%>/userPage/privatePage.jsp">Thông tin cá nhân</a></li>
                     </ul>
                 </div>
                 <div class="rightHeaderUser col-sm-4">
                     <ul class="rightItemsUser">
-                        <li><a href="#">Xin chào Tuan</a></li>
-                        <li><a href="#">Đăng xuất</a></li>
+                        <li><a href="#">Xin chào <%=u.getUsername()%></a></li>
+                        <li><a href="<%=url%>/khach-hang?hanhDong=dang-xuat">Đăng xuất</a></li>
                     </ul>
                 </div>
             </div>
+            <% } %>
         </div>
     </div>
 </header>

@@ -239,7 +239,7 @@ public class userDAO implements DAOInterface<user> {
     return kq;
   }
 
-  public int updatePassword(user u) {
+  public boolean updatePassword(user u) {
     int kq = 0;
     try {
       Connection con = JDBCUtil.getConnection();
@@ -261,7 +261,7 @@ public class userDAO implements DAOInterface<user> {
     } catch (SQLException e) {
       e.printStackTrace();
     }
-    return kq;
+    return kq>0;
   }
 
 }
