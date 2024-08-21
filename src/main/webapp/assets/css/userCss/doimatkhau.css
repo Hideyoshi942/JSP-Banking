@@ -108,26 +108,3 @@ button:hover {
 .modal-content button:hover {
     background-color: #0056b3;
 }
-
-.modal-content {
-    position: relative;
-    padding: 20px;
-}
-
-.close {
-    position: absolute;
-    top: 10px;
-    right: 15px;
-    color: #aaa;
-    font-size: 28px;
-    font-weight: bold;
-    cursor: pointer;
-    margin-left: 55vh;
-}
-
-.close:hover,
-.close:focus {
-    color: black;
-    text-decoration: none;
-    cursor: pointer;
-}

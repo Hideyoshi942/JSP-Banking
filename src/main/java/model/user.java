@@ -46,6 +46,10 @@ public class user {
     this.agree_term = agreeTerm;
   }
 
+  public user(int userId) {
+    this.user_id = userId;
+  }
+
   public int getUser_id() {
     return user_id;
   }

@@ -32,9 +32,6 @@
     String comfirm_password = request.getAttribute("confirm-password") + "";
     comfirm_password = (comfirm_password.equals("null")) ? "" : comfirm_password;
 
-    String verification_code = request.getAttribute("verification-code") + "";
-    verification_code = (verification_code.equals("null")) ? "" : verification_code;
-
     String url = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath();
 %>
 <div class="password-change-container">
@@ -54,20 +51,11 @@
             <label for="confirm-password">Nhập lại mật khẩu mới</label>
             <input type="password" id="confirm-password" name="confirm-password" required onkeyup="kiemTraMatKhauXacNhan()" value="<%=comfirm_password%>">
         </div>
-        <button type="submit" onclick="showVerificationCodeModal()">Xác nhận</button>
+        <button type="submit">Xác nhận</button>
         <button style="margin-top: 10px; background-color: orange;" onclick="window.location.href='privatePage.jsp'">Quay lại</button>
     </form>
 </div>
 
-<!-- Modal nhập mã xác thực -->
-<div id="verificationModal" class="modal">
-    <div class="modal-content">
-        <span class="close" onclick="closeModal()">X</span>
-        <h3>Nhập mã xác thực</h3>
-        <input type="text" id="verification-code" name="verification-code" value="<%=verification_code%>" maxlength="6" placeholder="Nhập mã xác thực" required style="width: 95%;">
-        <button type="submit" onclick="submitVerificationCode()">Xác nhận mã</button>
-    </div>
-</div>
 <script type="text/javascript" src="/JSP_Banking_war/assets/js/doimatkhau.js"></script>
 </body>
 </html>

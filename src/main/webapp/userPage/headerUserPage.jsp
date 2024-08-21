@@ -27,8 +27,8 @@
                 <div class="leftHeaderUser col-sm-8">
                     <ul class="leftItemsUser">
                         <li><a href="#">JSP-Banking</a></li>
-                        <li><a href="#">Bảng biểu</a></li>
-                        <li><a href="#">Lịch sử giao dịch</a></li>
+                        <li><a href="<%=url%>/userPage/bangbieu.jsp">Bảng biểu</a></li>
+                        <li><a href="<%=url%>/userPage/lichsugiaodich.jsp">Lịch sử giao dịch</a></li>
                         <li><a href="<%=url%>/userPage/privatePage.jsp">Thông tin cá nhân</a></li>
                     </ul>
                 </div>

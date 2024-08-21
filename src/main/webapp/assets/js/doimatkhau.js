@@ -1,11 +1,3 @@
-function closeModal() {
-    document.getElementById("verificationModal").style.display = "none";
-}
-
-function showVerificationCodeModal() {
-    // Hiển thị modal nhập mã xác thực
-    document.getElementById("verificationModal").style.display = "flex";
-}
 
 function submitVerificationCode() {
     const code = document.getElementById("verification-code").value;

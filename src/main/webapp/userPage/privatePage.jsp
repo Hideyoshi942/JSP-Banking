@@ -9,8 +9,8 @@
 <html>
 <head>
     <title>Cá nhân</title>
-    <link rel="stylesheet" href="../assets/css/bootstrap.min.css">
-    <link rel="stylesheet" href="../assets/css/userCss/privatePage.css">
+    <link rel="stylesheet" href="/JSP_Banking_war/assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/JSP_Banking_war/assets/css/userCss/privatePage.css">
     <link rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"/>
 </head>
@@ -19,17 +19,17 @@
     <div class="container">
         <div class="boxPrivate">
             <div class="boxItems">
-                <button onclick="window.location.href='thongtincanhan.jsp'"><i
+                <button onclick="window.location.href='/JSP_Banking_war/userPage/thongtincanhan.jsp'"><i
                         class="fa-solid fa-user"></i> Thông tin cá nhân
                 </button>
             </div>
             <div class="boxItems">
-                <button onclick="window.location.href='doimatkhau.jsp'"><i
+                <button onclick="window.location.href='/JSP_Banking_war/userPage/doimatkhau.jsp'"><i
                         class="fa-solid fa-lock"></i> Đổi mật khẩu
                 </button>
             </div>
             <div class="boxItems">
-                <button onclick="window.location.href='homePageUser.jsp'"><i
+                <button onclick="window.location.href='/JSP_Banking_war/userPage/homePageUser.jsp'"><i
                         class="fa-solid fa-arrow-left"></i> Quay lại
                 </button>
             </div>
