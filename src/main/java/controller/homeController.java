@@ -39,11 +39,10 @@ public class homeController extends HttpServlet {
       guiMaDoiMatKhau(request, response);
     } else if(hanhDong.equals("xac-nhan-doi-mat-khau")){
       doiMatKhau(request, response);
+    } else if (hanhDong.equals("doi-thong-tin-ca-nhan")) {
+      doiThongTinCaNhan(request, response);
     }
   }
-
-
-
 
   @Override
   protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -338,6 +337,40 @@ public class homeController extends HttpServlet {
     }
   }
 
+  private void doiThongTinCaNhan(HttpServletRequest request, HttpServletResponse response) {
+    try {
+      String userName = request.getParameter("username");
+      String email = request.getParameter("email");
+      String phoneNumber = request.getParameter("phone_number");
+
+      String baoLoi = "";
+      HttpSession session = request.getSession();
+      user us = (user) session.getAttribute("us");
+      if (us == null) {
+        baoLoi = "Vui lòng đăng nhập.";
+      } else if (userName == null || email == null || phoneNumber == null) {
+        baoLoi = "Vui lòng điền đầy đủ.";
+      }
+
+      if (baoLoi.isEmpty()) {
+        user u = new user();
+        u.setUser_id(us.getUser_id());
+        u.setUsername(userName);
+        u.setEmail(email);
+        u.setPhone_number(phoneNumber);
+        userDAO uDAO = new userDAO();
+        uDAO.updateThongTinCaNhan(u);
+        baoLoi = "Thay doi thong tin thanh cong";
+      }
+      request.setAttribute("baoLoi", baoLoi);
+      RequestDispatcher rd = getServletContext().getRequestDispatcher("/userPage/thongtincanhan.jsp");
+      rd.forward(request, response);
+    } catch (ServletException e) {
+      e.printStackTrace();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
 
   public static String getNoiDungEmailXacThuc(user u) {
     String link = "http://localhost:8080/JSP_Banking_war/khach-hang?hanhDong=xac-thuc&user_id=" + u.getUser_id() + "&verification_code=" + u.getVerification_code();

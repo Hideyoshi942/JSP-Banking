@@ -289,4 +289,29 @@ public class userDAO implements DAOInterface<user> {
     return kq>0;
   }
 
+  public boolean updateThongTinCaNhan(user u) {
+    int kq = 0;
+    try {
+      Connection con = JDBCUtil.getConnection();
+
+      String sql = "Update users " + "set " + " username=?" + ", email=?" + ", phone_number=?" +  " where user_id=?";
+
+      PreparedStatement st = con.prepareStatement(sql);
+      st.setString(1, u.getUsername());
+      st.setString(2, u.getEmail());
+      st.setString(3, u.getPhone_number());
+      st.setInt(4, u.getUser_id());
+
+      System.out.println(sql);
+      kq = st.executeUpdate();
+
+      System.out.println("Bạn đã thực thi: " + sql);
+      System.out.println("Có " + kq + " dòng bị thay đổi!");
+
+      JDBCUtil.closeConnection(con);
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+    return kq>0;
+  }
 }
