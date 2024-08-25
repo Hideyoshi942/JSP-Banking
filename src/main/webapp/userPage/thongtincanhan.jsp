@@ -60,7 +60,7 @@
                 <input type="text" id="phone_number" placeholder="<%=u.getPhone_number()%>" name="phone_number" value="<%=phone_number%>"/>
             </div>
             <button type="submit">Sửa</button>
-            <button style="margin-top: 10px; background-color: orange;" onclick="window.location.href='privatePage.jsp'">Quay lại</button>
+            <button type="button" style="margin-top: 10px; background-color: orange;" onclick="window.location.href='privatePage.jsp'">Quay lại</button>
         </div>
     </form>
     <% } %>

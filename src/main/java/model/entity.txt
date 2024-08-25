@@ -19,6 +19,7 @@ account_number: Số tài khoản
 account_type: Loại tài khoản (Saving, Checking)
 balance: Số dư
 created_at: Ngày tạo
+state: Trạng thái
 
 Bảng Transactions
 transaction_id: Số định danh giao dịch (Primary Key)

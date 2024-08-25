@@ -1,4 +1,7 @@
-<%@ page import="model.user" %><%--
+<%@ page import="model.user" %>
+<%@ page import="model.account" %>
+
+<%--
   Created by IntelliJ IDEA.
   User: Admin
   Date: 7/30/2024
@@ -17,16 +20,21 @@
         <div class="container">
             <%
                 Object obj = session.getAttribute("us");
+                Object objac = session.getAttribute("ac");
                 user u = null;
-                if (obj!=null)
-                    u = (user)obj;
+                account a = null;
+                if (obj!=null && objac!=null) {
+                    u = (user) obj;
+                    a = (account) objac;
+                }
 
-                if(u!=null){
+                if(u!=null && a!=null){
+
             %>
             <div class="row navigatorHeaderUser">
                 <div class="leftHeaderUser col-sm-8">
                     <ul class="leftItemsUser">
-                        <li><a href="#">JSP-Banking</a></li>
+                        <li><a href="<%=url%>/userPage/homePageUser.jsp">JSP-Banking</a></li>
                         <li><a href="<%=url%>/userPage/bangbieu.jsp">Bảng biểu</a></li>
                         <li><a href="<%=url%>/userPage/lichsugiaodich.jsp">Lịch sử giao dịch</a></li>
                         <li><a href="<%=url%>/userPage/privatePage.jsp">Thông tin cá nhân</a></li>
@@ -44,16 +52,23 @@
     </div>
 </header>
 <script>
-  // JavaScript để thêm lớp active vào mục hiện tại
   document.addEventListener("DOMContentLoaded", function() {
     var path = window.location.pathname;
-    var page = path.split("/").pop();
+    var page = path.split("/").pop(); // Lấy tên tệp từ đường dẫn
 
     var links = document.querySelectorAll(".leftItemsUser a");
     links.forEach(function(link) {
-      if (link.getAttribute("href") === page) {
+      var linkPath = link.getAttribute("href");
+
+      // Xóa dấu "/" ở đầu và so sánh
+      if (linkPath.startsWith("/")) {
+        linkPath = linkPath.substring(1);
+      }
+
+      if (linkPath === page) {
         link.classList.add("active");
       }
     });
   });
 </script>
+

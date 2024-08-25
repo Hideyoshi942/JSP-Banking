@@ -1,5 +1,6 @@
 package controller;
 
+import dao.accountDAO;
 import dao.userDAO;
 import java.io.PrintWriter;
 import java.sql.Date;
@@ -12,6 +13,7 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 import javax.servlet.annotation.*;
 import java.io.IOException;
+import model.account;
 import model.user;
 import until.Email;
 import until.MaHoa;
@@ -61,11 +63,14 @@ public class homeController extends HttpServlet {
       u.setPassword(matKhau);
 
       userDAO uDAO = new userDAO();
+      accountDAO accountDAO = new accountDAO();
       user us = uDAO.selectByPhonenumberAndPassword(u);
       String url = "";
       if (us != null && us.getType_user().equals("user")) {
+        account ac = accountDAO.getAccountByUserId(String.valueOf(us.getUser_id()));
         HttpSession session = request.getSession();
         session.setAttribute("us", us);
+        session.setAttribute("ac", ac);
         url = "/userPage/homePageUser.jsp";
       } else  if (us != null && us.getType_user().equals("admin")) {
           HttpSession session = request.getSession();
@@ -346,31 +351,53 @@ public class homeController extends HttpServlet {
       String baoLoi = "";
       HttpSession session = request.getSession();
       user us = (user) session.getAttribute("us");
+
       if (us == null) {
         baoLoi = "Vui lòng đăng nhập.";
-      } else if (userName == null || email == null || phoneNumber == null) {
-        baoLoi = "Vui lòng điền đầy đủ.";
+      } else if (userName == null && email == null && phoneNumber == null) {
+        baoLoi = "Vui lòng điền đầy đủ thông tin.";
       }
 
       if (baoLoi.isEmpty()) {
-        user u = new user();
-        u.setUser_id(us.getUser_id());
-        u.setUsername(userName);
-        u.setEmail(email);
-        u.setPhone_number(phoneNumber);
         userDAO uDAO = new userDAO();
-        uDAO.updateThongTinCaNhan(u);
-        baoLoi = "Thay doi thong tin thanh cong";
+        boolean success = true;
+
+        if (userName != null && !userName.isEmpty()) {
+          us.setUsername(userName);
+          success &= uDAO.updateThongTinCaNhan1(us);
+        }
+        if (email != null && !email.isEmpty()) {
+          us.setEmail(email);
+          success &= uDAO.updateThongTinCaNhan2(us);
+        }
+        if (phoneNumber != null && !phoneNumber.isEmpty()) {
+          us.setPhone_number(phoneNumber);
+          success &= uDAO.updateThongTinCaNhan3(us);
+        }
+
+        if (success) {
+          baoLoi = "Thay đổi thông tin thành công.";
+        } else {
+          baoLoi = "Có lỗi xảy ra khi thay đổi thông tin. Vui lòng thử lại.";
+        }
       }
+
       request.setAttribute("baoLoi", baoLoi);
-      RequestDispatcher rd = getServletContext().getRequestDispatcher("/userPage/thongtincanhan.jsp");
+      RequestDispatcher rd = getServletContext().getRequestDispatcher("/userPage/privatePage.jsp");
       rd.forward(request, response);
-    } catch (ServletException e) {
+
+    } catch (ServletException | IOException e) {
       e.printStackTrace();
-    } catch (IOException e) {
-      e.printStackTrace();
+      request.setAttribute("baoLoi", "Đã xảy ra lỗi không mong muốn. Vui lòng thử lại sau.");
+      try {
+        RequestDispatcher rd = getServletContext().getRequestDispatcher("/userPage/privatePage.jsp");
+        rd.forward(request, response);
+      } catch (ServletException | IOException ex) {
+        ex.printStackTrace();
+      }
     }
   }
+
 
   public static String getNoiDungEmailXacThuc(user u) {
     String link = "http://localhost:8080/JSP_Banking_war/khach-hang?hanhDong=xac-thuc&user_id=" + u.getUser_id() + "&verification_code=" + u.getVerification_code();

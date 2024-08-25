@@ -7,15 +7,25 @@ public class account {
   private String account_type;
   private String balance;
   private String created_at;
+  private boolean state;
 
   public account(int account_id, int user_id_account, String account_number, String account_type,
-      String balance, String created_at) {
+      String balance, String created_at, boolean state) {
     this.account_id = account_id;
     this.user_id_account = user_id_account;
     this.account_number = account_number;
     this.account_type = account_type;
     this.balance = balance;
     this.created_at = created_at;
+    this.state = state;
+  }
+
+  public boolean isState() {
+    return state;
+  }
+
+  public void setState(boolean state) {
+    this.state = state;
   }
 
   public int getAccount_id() {

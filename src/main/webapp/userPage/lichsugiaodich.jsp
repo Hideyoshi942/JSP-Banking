@@ -9,101 +9,11 @@
 <html>
 <head>
     <title>Lịch Sử Giao Dịch</title>
-    <style>
-      body {
-        font-family: Arial, sans-serif;
-        background-color: #f4f4f9;
-        margin: 0;
-        padding: 0;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        min-height: 100vh;
-      }
-
-      .transaction-history-container {
-        width: 80%;
-        max-width: 900px;
-        background-color: #fff;
-        box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-        border-radius: 8px;
-        overflow: hidden;
-      }
-
-      .header {
-        background-color: #007bff;
-        color: #fff;
-        padding: 20px;
-        text-align: center;
-        font-size: 24px;
-        font-weight: bold;
-      }
-
-      .transaction-list {
-        padding: 20px;
-      }
-
-      .transaction-item {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 15px;
-        border-bottom: 1px solid #ddd;
-        transition: background-color 0.3s ease;
-      }
-
-      .transaction-item:hover {
-        background-color: #f0f0f0;
-      }
-
-      .transaction-item:last-child {
-        border-bottom: none;
-      }
-
-      .transaction-details {
-        display: flex;
-        flex-direction: column;
-      }
-
-      .transaction-amount {
-        font-size: 18px;
-        font-weight: bold;
-      }
-
-      .transaction-date {
-        color: #888;
-        font-size: 14px;
-      }
-
-      .transaction-type {
-        font-size: 16px;
-        color: #333;
-      }
-
-      .transaction-status {
-        padding: 5px 10px;
-        border-radius: 15px;
-        font-size: 14px;
-      }
-
-      .status-success {
-        background-color: #28a745;
-        color: #fff;
-      }
-
-      .status-failed {
-        background-color: #dc3545;
-        color: #fff;
-      }
-
-      .status-pending {
-        background-color: #ffc107;
-        color: #fff;
-      }
-    </style>
+    <link rel="stylesheet" href="/JSP_Banking_war/assets/css/userCss/lichsugiaodich.css">
 </head>
 <body>
-<div class="transaction-history-container">
+<%@include file="headerUserPage.jsp"%>
+<div class="container transaction-history-container">
     <div class="header">Lịch Sử Giao Dịch</div>
     <div class="transaction-list">
         <div class="transaction-item">

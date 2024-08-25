@@ -37,6 +37,7 @@
 }
 
 .active {
-    font-weight: bold; /* Hoặc bạn có thể thêm các kiểu dáng khác */
-    color: black; /* Thay đổi màu sắc nếu cần */
+    font-weight: bold;
+    color: yellow; /* Hoặc màu bạn muốn để làm nổi bật liên kết */
+    background-color: red; /* Hoặc màu nền nếu cần */
 }
