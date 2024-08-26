@@ -1,6 +1,38 @@
-* {
-    padding: 0;
-    margin: 0;
-    box-sizing: border-box;
+body {
+  background-color: #f8f9fa;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
+.transaction-container {
+  max-width: 600px;
+  margin: 100px auto;
+  padding: 20px;
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+.transaction-container h2 {
+  margin-bottom: 20px;
+  color: #007bff;
+  text-align: center;
+}
+
+.form-group label {
+  font-weight: bold;
+}
+
+.form-control {
+  border-radius: 5px;
+}
+
+.btn-primary {
+  width: 100%;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.form-group i {
+  margin-right: 10px;
+  color: #007bff;
+}

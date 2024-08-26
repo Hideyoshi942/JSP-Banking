@@ -7,15 +7,25 @@ public class transactions {
   private String amount;
   private String transaction_date;
   private int beneficiary_id;
+  private boolean state;
 
   public transactions(int transaction_id, int account_id, String transaction_type, String amount,
-      String transaction_date, int beneficiary_id) {
+      String transaction_date, int beneficiary_id, boolean state) {
     this.transaction_id = transaction_id;
     this.account_id = account_id;
     this.transaction_type = transaction_type;
     this.amount = amount;
     this.transaction_date = transaction_date;
     this.beneficiary_id = beneficiary_id;
+    this.state = state;
+  }
+
+  public boolean isState() {
+    return state;
+  }
+
+  public void setState(boolean state) {
+    this.state = state;
   }
 
   public int getTransaction_id() {

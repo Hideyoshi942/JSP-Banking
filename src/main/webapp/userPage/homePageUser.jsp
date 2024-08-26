@@ -20,7 +20,7 @@
                 <div class="row boxItemsUser">
                     <div class="col-sm-4 itemUser">
                         <div class="boderItemUser">
-                            <a href="#"><i class="fa-solid fa-money-bill-transfer"></i>
+                            <a href="<%=url%>/userPage/transacion.jsp"><i class="fa-solid fa-money-bill-transfer"></i>
                                 <br/>Chuyển tiền</a>
                         </div>
                     </div>

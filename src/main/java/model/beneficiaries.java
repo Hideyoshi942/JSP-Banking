@@ -7,6 +7,9 @@ public class beneficiaries {
   private String account_number;
   private String bank_name;
 
+  public beneficiaries() {
+  }
+
   public beneficiaries(int beneficiary_id, int user_id_beneficiari, String name,
       String account_number, String bank_name) {
     this.beneficiary_id = beneficiary_id;

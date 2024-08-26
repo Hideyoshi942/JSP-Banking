@@ -9,6 +9,9 @@ public class account {
   private String created_at;
   private boolean state;
 
+  public account() {
+  }
+
   public account(int account_id, int user_id_account, String account_number, String account_type,
       String balance, String created_at, boolean state) {
     this.account_id = account_id;

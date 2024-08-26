@@ -13,16 +13,20 @@
 </head>
 <body>
 <%@include file="headerUserPage.jsp"%>
+
 <div class="container transaction-history-container">
     <div class="header">Lịch Sử Giao Dịch</div>
+    <%
+        if (t != null) {
+    %>
     <div class="transaction-list">
         <div class="transaction-item">
             <div class="transaction-details">
-                <div class="transaction-amount">-1,500,000 VND</div>
-                <div class="transaction-type">Rút tiền</div>
-                <div class="transaction-date">18/08/2024</div>
+                <div class="transaction-amount">-<%=t.getAmount()%></div>
+                <div class="transaction-type"><%=t.getTransaction_type()%></div>
+                <div class="transaction-date"><%=t.getTransaction_date()%></div>
             </div>
-            <div class="transaction-status status-success">Thành công</div>
+            <div class="transaction-status status-success"><%=t.isState()%></div>
         </div>
         <div class="transaction-item">
             <div class="transaction-details">
@@ -49,6 +53,9 @@
             <div class="transaction-status status-success">Thành công</div>
         </div>
     </div>
+    <%
+        }
+    %>
 </div>
 </body>
 </html>

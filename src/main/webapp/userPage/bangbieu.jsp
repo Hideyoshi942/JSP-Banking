@@ -16,21 +16,22 @@
 </head>
 <body>
 <%@include file="headerUserPage.jsp"%>
-<%
-  if (a != null && a.getBalance() != null && !a.getBalance().trim().isEmpty()) {
-    try {
-      BigDecimal balance = new BigDecimal(a.getBalance().trim());
 
-      NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
-      String formattedBalance = currencyFormatter.format(balance);
-      String statusClass = a.isState() ? "status-active" : "status-inactive";
-%>
 <div class="account-info-container">
   <h2>Thông Tin Tài Khoản Ngân Hàng</h2>
+  <%
+    if (a != null && a.getBalance() != null && !a.getBalance().trim().isEmpty()) {
+      try {
+        BigDecimal balance = new BigDecimal(a.getBalance().trim());
+
+        NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
+        String formattedBalance = currencyFormatter.format(balance);
+        String statusClass = a.isState() ? "status-active" : "status-inactive";
+  %>
   <table>
     <tr>
       <th>Số Tài Khoản</th>
-      <td><%=a.getAccount_id()%></td>
+      <td><%=a.getAccount_number()%></td>
     </tr>
     <tr>
       <th>Chủ Tài Khoản</th>

@@ -1,5 +1,7 @@
 <%@ page import="model.user" %>
 <%@ page import="model.account" %>
+<%@ page import="model.beneficiaries" %>
+<%@ page import="model.transactions" %>
 
 <%--
   Created by IntelliJ IDEA.
@@ -21,11 +23,17 @@
             <%
                 Object obj = session.getAttribute("us");
                 Object objac = session.getAttribute("ac");
+                Object objbe = session.getAttribute("be");
+                Object objtr = session.getAttribute("tr");
                 user u = null;
                 account a = null;
+                beneficiaries b = null;
+                transactions t = null;
                 if (obj!=null && objac!=null) {
                     u = (user) obj;
                     a = (account) objac;
+                    b = (beneficiaries) objbe;
+                    t = (transactions) objtr;
                 }
 
                 if(u!=null && a!=null){

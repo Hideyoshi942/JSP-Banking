@@ -1,6 +1,8 @@
 package controller;
 
 import dao.accountDAO;
+import dao.beneficiariesDAO;
+import dao.transactionsDAO;
 import dao.userDAO;
 import java.io.PrintWriter;
 import java.sql.Date;
@@ -14,6 +16,8 @@ import javax.servlet.http.*;
 import javax.servlet.annotation.*;
 import java.io.IOException;
 import model.account;
+import model.beneficiaries;
+import model.transactions;
 import model.user;
 import until.Email;
 import until.MaHoa;
@@ -43,6 +47,8 @@ public class homeController extends HttpServlet {
       doiMatKhau(request, response);
     } else if (hanhDong.equals("doi-thong-tin-ca-nhan")) {
       doiThongTinCaNhan(request, response);
+    } else if (hanhDong.equals("giao-dich")) {
+//      giaoDich(request, response);
     }
   }
 
@@ -64,13 +70,19 @@ public class homeController extends HttpServlet {
 
       userDAO uDAO = new userDAO();
       accountDAO accountDAO = new accountDAO();
+      beneficiariesDAO beneficiariesDAO = new beneficiariesDAO();
+      transactionsDAO tDAO = new transactionsDAO();
       user us = uDAO.selectByPhonenumberAndPassword(u);
       String url = "";
       if (us != null && us.getType_user().equals("user")) {
         account ac = accountDAO.getAccountByUserId(String.valueOf(us.getUser_id()));
+        beneficiaries be = beneficiariesDAO.getAccountByUserId(String.valueOf(us.getUser_id()));
+        transactions tr = tDAO.getAccountByUserId(String.valueOf(us.getUser_id()));
         HttpSession session = request.getSession();
         session.setAttribute("us", us);
         session.setAttribute("ac", ac);
+        session.setAttribute("be", be);
+        session.setAttribute("tr", tr);
         url = "/userPage/homePageUser.jsp";
       } else  if (us != null && us.getType_user().equals("admin")) {
           HttpSession session = request.getSession();
@@ -186,13 +198,33 @@ public class homeController extends HttpServlet {
       user u = new user();
       u.setUser_id(user_id);
       user us = uDAO.selectById(u);
-
+      account ac = new account();
+      accountDAO aDAO = new accountDAO();
+      beneficiaries be = new beneficiaries();
+      beneficiariesDAO beDAO = new beneficiariesDAO();
       String msg = "";
       if (us != null) {
         if (us.getVerification_code().equals(verification_code)) {
-            us.setAuthentication_status(true);
-            uDAO.updateverifyInformation(us);
-            msg = "Xac thuc thanh cong!";
+          us.setAuthentication_status(true);
+          uDAO.updateverifyInformation(us);
+          Random rd = new Random();
+          int account_id = 100000000 + rd.nextInt(900000000);
+          long account_number = 1000000000000000L + (long)(rd.nextDouble() * 9000000000000000L);
+          ac.setUser_id_account(user_id);
+          ac.setAccount_id(account_id);
+          ac.setAccount_number(String.valueOf(account_number));
+          ac.setAccount_type("Thanh toán");
+          ac.setBalance("0");
+          ac.setCreated_at(LocalDateTime.now().toString());
+          ac.setState(true);
+          be.setBeneficiary_id(account_id);
+          be.setUser_id_beneficiari(user_id);
+          be.setName(us.getUsername());
+          be.setAccount_number(String.valueOf(account_number));
+          be.setBank_name("JSP-Banking");
+          aDAO.insert(ac);
+          beDAO.insert(be);
+          msg = "Xac thuc thanh cong!";
         } else {
           msg = "Ma xac thuc khong dung!";
         }
@@ -398,6 +430,22 @@ public class homeController extends HttpServlet {
     }
   }
 
+//  private void giaoDich(HttpServletRequest request, HttpServletResponse response) {
+//    try {
+//      String account_number = request.getParameter("account_number");
+//      String account_name = request.getParameter("account_name");
+//      String account_amount = request.getParameter("account_amount");
+//
+//      String baoLoi = "";
+//      if (account_number.equals("") || account_name.equals("") || account_amount.equals("")) {
+//        baoLoi = "Vui lòng điền đầy đủ thông tin giao dịch";
+//      }
+//    } catch (ServletException e) {
+//      e.printStackTrace();
+//    } catch (IOException e) {
+//      e.printStackTrace();
+//    }
+//  }
 
   public static String getNoiDungEmailXacThuc(user u) {
     String link = "http://localhost:8080/JSP_Banking_war/khach-hang?hanhDong=xac-thuc&user_id=" + u.getUser_id() + "&verification_code=" + u.getVerification_code();

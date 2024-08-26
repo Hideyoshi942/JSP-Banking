@@ -1,6 +1,7 @@
 package dao;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -21,7 +22,26 @@ public class accountDAO implements DAOInterface<account>{
 
   @Override
   public int insert(account account) {
-    return 0;
+    int kq = 0;
+    try {
+      Connection con = JDBCUtil.getConnection();
+      String sql = "Insert into accounts(account_id, user_id_account, account_number, account_type, balance, created_at, state) values(?,?,?,?,?,?,?)";
+      PreparedStatement st = con.prepareStatement(sql);
+      st.setInt(1, account.getAccount_id());
+      st.setInt(2, account.getUser_id_account());
+      st.setString(3, account.getAccount_number());
+      st.setString(4, account.getAccount_type());
+      st.setString(5, account.getBalance());
+      st.setString(6, account.getCreated_at());
+      st.setBoolean(7, account.isState());
+      kq = st.executeUpdate();
+      System.out.println("Bạn đã thực thi: " + sql);
+      System.out.println("Có " + kq + " dòng bị thay đổi!");
+      con.close();
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    return kq;
   }
 
   @Override
