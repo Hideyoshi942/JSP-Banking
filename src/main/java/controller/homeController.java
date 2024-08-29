@@ -8,6 +8,7 @@ import java.io.PrintWriter;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Objects;
 import java.util.Random;
@@ -48,7 +49,7 @@ public class homeController extends HttpServlet {
     } else if (hanhDong.equals("doi-thong-tin-ca-nhan")) {
       doiThongTinCaNhan(request, response);
     } else if (hanhDong.equals("giao-dich")) {
-//      giaoDich(request, response);
+      giaoDich(request, response);
     }
   }
 
@@ -77,7 +78,7 @@ public class homeController extends HttpServlet {
       if (us != null && us.getType_user().equals("user")) {
         account ac = accountDAO.getAccountByUserId(String.valueOf(us.getUser_id()));
         beneficiaries be = beneficiariesDAO.getAccountByUserId(String.valueOf(us.getUser_id()));
-        transactions tr = tDAO.getAccountByUserId(String.valueOf(us.getUser_id()));
+        ArrayList<transactions> tr = tDAO.getAccountByUserId(String.valueOf((ac.getAccount_id())));
         HttpSession session = request.getSession();
         session.setAttribute("us", us);
         session.setAttribute("ac", ac);
@@ -430,22 +431,54 @@ public class homeController extends HttpServlet {
     }
   }
 
-//  private void giaoDich(HttpServletRequest request, HttpServletResponse response) {
-//    try {
-//      String account_number = request.getParameter("account_number");
-//      String account_name = request.getParameter("account_name");
-//      String account_amount = request.getParameter("account_amount");
-//
-//      String baoLoi = "";
-//      if (account_number.equals("") || account_name.equals("") || account_amount.equals("")) {
-//        baoLoi = "Vui lòng điền đầy đủ thông tin giao dịch";
-//      }
-//    } catch (ServletException e) {
-//      e.printStackTrace();
-//    } catch (IOException e) {
-//      e.printStackTrace();
-//    }
-//  }
+  private void giaoDich(HttpServletRequest request, HttpServletResponse response) {
+    try {
+      String account_number = request.getParameter("account_number");
+      String account_name = request.getParameter("account_name");
+      String account_amount = request.getParameter("account_amount");
+
+      String baoLoi = "";
+      if (account_number == null || account_number.isEmpty() ||
+          account_name == null || account_name.isEmpty() ||
+          account_amount == null || account_amount.isEmpty()) {
+        baoLoi = "Vui lòng điền đầy đủ thông tin giao dịch";
+      }
+
+      HttpSession session = request.getSession();
+      account ac = (account) session.getAttribute("ac");
+      beneficiaries be = (beneficiaries) session.getAttribute("be");
+      accountDAO aDAO = new accountDAO();
+      transactionsDAO tDAO = new transactionsDAO();
+      transactions tran;
+      Random random = new Random();
+      System.out.println(ac.getAccount_id());
+      System.out.println(be.getBeneficiary_id());
+      int transaction_id = 100000000 + random.nextInt(900000000);
+      if (baoLoi.isEmpty()) {
+          if (aDAO.checkBalance(ac.getAccount_id(), account_amount)) {
+            aDAO.updateBalanceMinius(ac.getAccount_number(), account_amount); // account_number null
+            aDAO.updateBalancePlus(account_number, account_amount);
+            tran = new transactions(transaction_id, ac.getAccount_id(), "Giao dịch", account_amount, String.valueOf(LocalDateTime.now()) ,be.getBeneficiary_id(), true);
+            tDAO.insert(tran);
+            baoLoi = "Giao dịch thành công";
+          } else {
+            baoLoi = "Số dư không đủ";
+          }
+      }
+      System.out.println(baoLoi);
+      request.setAttribute("baoLoi", baoLoi);
+      String destinationPage = "/userPage/thanhCong.jsp";
+      if (!baoLoi.equals("Giao dịch thành công")) {
+        destinationPage = "/userPage/thatBai.jsp";
+      }
+      RequestDispatcher rd = getServletContext().getRequestDispatcher(destinationPage);
+      rd.forward(request, response);
+    } catch (ServletException e) {
+      e.printStackTrace();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
 
   public static String getNoiDungEmailXacThuc(user u) {
     String link = "http://localhost:8080/JSP_Banking_war/khach-hang?hanhDong=xac-thuc&user_id=" + u.getUser_id() + "&verification_code=" + u.getVerification_code();

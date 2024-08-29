@@ -76,7 +76,7 @@ public class beneficiariesDAO implements DAOInterface<beneficiaries> {
         String name = rs.getString("name");
         String account_number = rs.getString("account_number");
         String bank_name = rs.getString("bank_name");
-        kq = new beneficiaries(user_id_beneficiari, beneficiary_id, name, account_number, bank_name);
+        kq = new beneficiaries(beneficiary_id, user_id_beneficiari, name, account_number, bank_name);
       }
       JDBCUtil.closeConnection(con);
     } catch (Exception e) {

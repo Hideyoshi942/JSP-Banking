@@ -9,6 +9,9 @@ public class transactions {
   private int beneficiary_id;
   private boolean state;
 
+  public transactions() {
+  }
+
   public transactions(int transaction_id, int account_id, String transaction_type, String amount,
       String transaction_date, int beneficiary_id, boolean state) {
     this.transaction_id = transaction_id;

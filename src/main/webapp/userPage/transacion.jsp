@@ -55,11 +55,10 @@
         <label>Số Tài Khoản Nguồn: <%=a.getAccount_number()%></label>
     </div>
 
-    <!-- Balance -->
     <div class="form-group">
         <label>Số Dư: <%=formattedBalance%> </label>
     </div>
-    <form action="<%=url%>/khach-hang">
+    <form action="<%=url%>/khach-hang" method="post">
         <input type="hidden" name="hanhDong" value="giao-dich">
         <div class="red"><%=baoLoi%></div>
         <div class="form-group">
@@ -68,15 +67,15 @@
         </div>
         <div class="form-group">
             <label for="accountNumber"><i class="fa-solid fa-hashtag"></i>Số Tài Khoản</label>
-            <input type="text" class="form-control" id="accountNumber" placeholder="Enter account number" required value="<%=account_number%>">
+            <input type="text" class="form-control" id="accountNumber" name="account_number" placeholder="Enter account number" required value="<%=account_number%>">
         </div>
         <div class="form-group">
             <label for="recipientName"><i class="fa-solid fa-user"></i>Tên Người Hưởng Thụ</label>
-            <input type="text" class="form-control" id="recipientName" placeholder="Enter recipient name" required value="<%=account_name%>>
+            <input type="text" class="form-control" id="recipientName" name="account_name" placeholder="Enter recipient name" required value="<%=account_name%>">
         </div>
         <div class="form-group">
             <label for="amount"><i class="fa-solid fa-dollar-sign"></i>Số Tiền</label>
-            <input type="number" class="form-control" id="amount" placeholder="Enter amount" required value="<%=account_amount%>">
+            <input type="text" class="form-control" id="amount" name="account_amount" placeholder="Enter amount" required value="<%=account_amount%>">
         </div>
         <button type="submit" class="btn btn-primary"><i class="fa-solid fa-paper-plane"></i> Giao Dịch</button>
     </form>

@@ -1,10 +1,4 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: Admin
-  Date: 8/21/2024
-  Time: 9:00 AM
-  To change this template use File | Settings | File Templates.
---%>
+<%@ page import="java.util.List" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
@@ -17,42 +11,33 @@
 <div class="container transaction-history-container">
     <div class="header">Lịch Sử Giao Dịch</div>
     <%
-        if (t != null) {
+        Object objtr = session.getAttribute("tr");
+        List<transactions> transactionList = null;
+        if(objtr != null) {
+            transactionList = (List<transactions>) objtr;
+        }
+        if (transactionList != null && !transactionList.isEmpty()) {
     %>
     <div class="transaction-list">
+        <%
+            for (transactions t : transactionList) {
+        %>
         <div class="transaction-item">
             <div class="transaction-details">
-                <div class="transaction-amount">-<%=t.getAmount()%></div>
-                <div class="transaction-type"><%=t.getTransaction_type()%></div>
-                <div class="transaction-date"><%=t.getTransaction_date()%></div>
+                <div class="transaction-amount"><%= t.getAmount() %></div>
+                <div class="transaction-type"><%= t.getTransaction_type() %></div>
+                <div class="transaction-date"><%= t.getTransaction_date() %></div>
             </div>
-            <div class="transaction-status status-success"><%=t.isState()%></div>
-        </div>
-        <div class="transaction-item">
-            <div class="transaction-details">
-                <div class="transaction-amount">+3,000,000 VND</div>
-                <div class="transaction-type">Chuyển khoản nhận</div>
-                <div class="transaction-date">17/08/2024</div>
+            <div class="transaction-status <%= t.isState() ? "status-success" : "status-failed" %>">
+                <%= t.isState() ? "Thành công" : "Thất bại" %>
             </div>
-            <div class="transaction-status status-success">Thành công</div>
         </div>
-        <div class="transaction-item">
-            <div class="transaction-details">
-                <div class="transaction-amount">-500,000 VND</div>
-                <div class="transaction-type">Thanh toán hóa đơn</div>
-                <div class="transaction-date">16/08/2024</div>
-            </div>
-            <div class="transaction-status status-pending">Đang xử lý</div>
-        </div>
-        <div class="transaction-item">
-            <div class="transaction-details">
-                <div class="transaction-amount">+1,000,000 VND</div>
-                <div class="transaction-type">Nạp tiền</div>
-                <div class="transaction-date">15/08/2024</div>
-            </div>
-            <div class="transaction-status status-success">Thành công</div>
-        </div>
+        <% } %>
     </div>
+    <%
+    } else {
+    %>
+    <div class="no-transactions">Không có giao dịch nào.</div>
     <%
         }
     %>

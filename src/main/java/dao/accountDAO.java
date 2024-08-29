@@ -81,7 +81,7 @@ public class accountDAO implements DAOInterface<account>{
         String balance = rs.getString("balance");
         String created_at = rs.getString("created_at");
         boolean state = rs.getBoolean("state");
-        kq = new account(user_id_account, account_id, account_number, account_type, balance, created_at, state);
+        kq = new account(account_id, user_id_account, account_number, account_type, balance, created_at, state);
       }
       JDBCUtil.closeConnection(con);
     } catch (Exception e) {
@@ -89,4 +89,69 @@ public class accountDAO implements DAOInterface<account>{
     }
     return kq;
   }
+
+  public boolean checkBalance(int accountId, String amount) {
+    boolean ketQua = false;
+    try {
+      Connection con = JDBCUtil.getConnection();
+      String sql = "Select balance from accounts where account_id=?";
+      PreparedStatement st = con.prepareStatement(sql);
+      st.setInt(1, accountId);
+      System.out.println(sql);
+      ResultSet rs = st.executeQuery();
+      if (rs.next()) {
+        int balance = Integer.parseInt(rs.getString("balance"));
+        if (balance > 0 && balance >= Integer.parseInt(amount)) {
+          ketQua = true;
+        }
+      }
+      JDBCUtil.closeConnection(con);
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+    return ketQua;
+  }
+
+  public int updateBalanceMinius(String accountId, String amount) {
+    int ketQua = 0;
+    try {
+      Connection con = JDBCUtil.getConnection();
+      // Chuyển balance từ string sang số, thực hiện phép trừ, sau đó lại chuyển về string
+      String sql = "Update accounts set balance = CAST(CAST(balance AS DECIMAL) - ? AS CHAR) where account_number = ?";
+      PreparedStatement st = con.prepareStatement(sql);
+      st.setInt(1, Integer.parseInt(amount)); // Chuyển đổi amount thành số
+      st.setString(2, accountId);
+
+      // In ra câu lệnh SQL đã bao gồm các giá trị thực tế
+      System.out.println("Update accounts set balance = CAST(CAST(balance AS DECIMAL) - " + amount + " AS CHAR) where account_id = '" + accountId + "'");
+
+      ketQua = st.executeUpdate();
+      JDBCUtil.closeConnection(con);
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+    return ketQua;
+  }
+
+
+  public int updateBalancePlus(String accountId, String amount) {
+    int ketQua = 0;
+    try {
+      Connection con = JDBCUtil.getConnection();
+      // Chuyển balance từ string sang số, thực hiện phép cộng, sau đó lại chuyển về string
+      String sql = "Update accounts set balance = CAST(CAST(balance AS DECIMAL) + ? AS CHAR) where account_number = ?";
+      PreparedStatement st = con.prepareStatement(sql);
+      st.setInt(1, Integer.parseInt(amount)); // Chuyển đổi amount thành số
+      st.setString(2, accountId);
+
+      System.out.println("Update accounts set balance = CAST(CAST(balance AS DECIMAL) + " + amount + " AS CHAR) where account_id = '" + accountId + "'");
+
+      ketQua = st.executeUpdate();
+      JDBCUtil.closeConnection(con);
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+    return ketQua;
+  }
+
 }
