@@ -1,0 +1,74 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #74ebd5, #ACB6E5);
+    display: flex;
+    height: auto;
+    margin: 0;
+}
+
+.loan-form-container {
+    background-color: #ffffff;
+    padding: 40px 50px;
+    border-radius: 15px;
+    box-shadow: 0 0 25px rgba(0, 0, 0, 0.2);
+    max-width: 400px;
+    width: 100%;
+    text-align: center;
+    margin: 100px 0;
+}
+
+.loan-form-container h1 {
+    margin-bottom: 20px;
+    font-size: 26px;
+    font-weight: 600;
+    color: #333;
+}
+
+.loan-form-container label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: 400;
+    font-size: 14px;
+    color: #666;
+    text-align: left;
+}
+
+.loan-form-container input[type="text"],
+.loan-form-container input[type="date"],
+.loan-form-container input[type="number"] {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 16px;
+    box-sizing: border-box;
+    transition: all 0.3s ease;
+}
+
+.loan-form-container input[type="text"]:focus,
+.loan-form-container input[type="date"]:focus,
+.loan-form-container input[type="number"]:focus {
+    border-color: #74ebd5;
+    box-shadow: 0 0 5px rgba(116, 235, 213, 0.5);
+    outline: none;
+}
+
+.loan-form-container input[type="submit"] {
+    background: linear-gradient(135deg, #74ebd5, #ACB6E5);
+    color: white;
+    padding: 15px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 18px;
+    font-weight: 600;
+    width: 100%;
+    transition: background 0.3s ease;
+}
+
+.loan-form-container input[type="submit"]:hover {
+    background: linear-gradient(135deg, #ACB6E5, #74ebd5);
+}

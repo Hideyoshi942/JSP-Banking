@@ -40,6 +40,9 @@
 
     String account_amount = request.getAttribute("account_amount") + "";
     account_amount = (account_amount != null) ? "" : account_amount;
+
+    String description = request.getAttribute("description") + "";
+    description = (description != null) ? "" : description;
 %>
 <div class="transaction-container">
     <h2>Bank Transaction</h2>
@@ -76,6 +79,10 @@
         <div class="form-group">
             <label for="amount"><i class="fa-solid fa-dollar-sign"></i>Số Tiền</label>
             <input type="text" class="form-control" id="amount" name="account_amount" placeholder="Enter amount" required value="<%=account_amount%>">
+        </div>
+        <div class="form-group">
+            <label for="description"><i class="fa-solid fa-comments"></i>Nội dung</label>
+            <input type="text" class="form-control" id="description" name="description" placeholder="Enter description" required value="<%=description%>">
         </div>
         <button type="submit" class="btn btn-primary"><i class="fa-solid fa-paper-plane"></i> Giao Dịch</button>
     </form>

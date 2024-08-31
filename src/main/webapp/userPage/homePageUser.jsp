@@ -40,7 +40,7 @@
                 <div class="row boxItemsUser">
                     <div class="col-sm-4 itemUser">
                         <div class="boderItemUser">
-                            <a href="#"><i class="fa-solid fa-hand-holding-dollar"></i><br/>Vay tiền</a></div>
+                            <a href="<%=url%>/userPage/loans.jsp"><i class="fa-solid fa-hand-holding-dollar"></i><br/>Vay tiền</a></div>
                     </div>
                     <div class="col-sm-4 itemUser">
                         <div class="boderItemUser">

@@ -24,8 +24,9 @@
         %>
         <div class="transaction-item">
             <div class="transaction-details">
-                <div class="transaction-amount"><%= t.getAmount() %></div>
+                <div class="transaction-amount"><%=t.isAmount_type() ? "+" : "-"%> <%= t.getAmount() %></div>
                 <div class="transaction-type"><%= t.getTransaction_type() %></div>
+                <div class="transaction-type"><%= t.getDescription()%></div>
                 <div class="transaction-date"><%= t.getTransaction_date() %></div>
             </div>
             <div class="transaction-status <%= t.isState() ? "status-success" : "status-failed" %>">

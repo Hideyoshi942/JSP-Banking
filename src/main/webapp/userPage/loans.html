@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loan Application</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #74ebd5, #ACB6E5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .loan-form-container {
+            background-color: #ffffff;
+            padding: 40px 50px;
+            border-radius: 15px;
+            box-shadow: 0 0 25px rgba(0, 0, 0, 0.2);
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .loan-form-container h1 {
+            margin-bottom: 20px;
+            font-size: 26px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .loan-form-container label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 400;
+            font-size: 14px;
+            color: #666;
+            text-align: left;
+        }
+
+        .loan-form-container input[type="text"],
+        .loan-form-container input[type="date"],
+        .loan-form-container input[type="number"] {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+        }
+
+        .loan-form-container input[type="text"]:focus,
+        .loan-form-container input[type="date"]:focus,
+        .loan-form-container input[type="number"]:focus {
+            border-color: #74ebd5;
+            box-shadow: 0 0 5px rgba(116, 235, 213, 0.5);
+            outline: none;
+        }
+
+        .loan-form-container input[type="submit"] {
+            background: linear-gradient(135deg, #74ebd5, #ACB6E5);
+            color: white;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: 600;
+            width: 100%;
+            transition: background 0.3s ease;
+        }
+
+        .loan-form-container input[type="submit"]:hover {
+            background: linear-gradient(135deg, #ACB6E5, #74ebd5);
+        }
+    </style>
+    <script>
+        function calculateInterestRate() {
+            const startDate = new Date(document.getElementById('start-date').value);
+            const endDate = new Date(document.getElementById('end-date').value);
+            const interestRateInput = document.getElementById('interest-rate');
+
+            if (startDate && endDate) {
+                const timeDiff = Math.abs(endDate.getTime() - startDate.getTime());
+                const diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
+                const diffMonths = diffDays / 30;
+
+                if (diffMonths <= 6) {
+                    interestRateInput.value = 5;
+                } else if (diffMonths > 6 && diffMonths <= 12) {
+                    interestRateInput.value = 7.5;
+                } else if (diffMonths > 12) {
+                    interestRateInput.value = 10;
+                }
+            }
+        }
+    </script>
+</head>
+
+<body>
+    <div class="loan-form-container">
+        <h1>Loan Application</h1>
+        <form action="#" method="post">
+            <label for="loan-amount">Số tiền vay</label>
+            <input type="text" id="loan-amount" name="loan-amount" placeholder="Enter loan amount" required>
+
+            <label for="start-date">Ngày bắt đầu</label>
+            <input type="date" id="start-date" name="start-date" onchange="calculateInterestRate()" required>
+
+            <label for="end-date">Ngày kết thúc</label>
+            <input type="date" id="end-date" name="end-date" onchange="calculateInterestRate()" required>
+
+            <label for="interest-rate">Lãi suất (%)</label>
+            <input type="number" id="interest-rate" name="interest-rate" placeholder="Interest rate" step="0.01" readonly required>
+
+            <input type="submit" value="Vay tiền">
+        </form>
+    </div>
+</body>
+
+</html>

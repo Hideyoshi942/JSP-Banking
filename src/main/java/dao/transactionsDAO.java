@@ -32,9 +32,11 @@ public class transactionsDAO implements DAOInterface<transactions> {
         String transaction_date = rs.getString("transaction_date");
         Integer beneficiary_id = rs.getInt("beneficiary_id");
         boolean state = rs.getBoolean("state");
+        String description = rs.getString("description");
+        boolean amount_type = rs.getBoolean("amount_type");
 
         // Tạo đối tượng transactions và thêm vào danh sách
-        transactions tran = new transactions(transaction_id, account_id, transaction_type, amount, transaction_date, beneficiary_id, state);
+        transactions tran = new transactions(transaction_id, account_id, transaction_type, amount, transaction_date, beneficiary_id, state, description, amount_type);
         transactionsList.add(tran);
       }
 
@@ -56,7 +58,7 @@ public class transactionsDAO implements DAOInterface<transactions> {
     int kq = 0;
     try {
       Connection con = JDBCUtil.getConnection();
-      String sql = "Insert into transactions(transaction_id, account_id, transaction_type, amount, transaction_date, beneficiary_id, state) values(?,?,?,?,?,?,?)";
+      String sql = "Insert into transactions(transaction_id, account_id, transaction_type, amount, transaction_date, beneficiary_id, state, description, amount_type) values(?,?,?,?,?,?,?,?,?)";
       PreparedStatement st = con.prepareStatement(sql);
       st.setInt(1, transactions.getTransaction_id());
       st.setInt(2, transactions.getAccount_id());
@@ -65,6 +67,8 @@ public class transactionsDAO implements DAOInterface<transactions> {
       st.setString(5, transactions.getTransaction_date());
       st.setInt(6, transactions.getBeneficiary_id());
       st.setBoolean(7, transactions.isState());
+      st.setString(8, transactions.getDescription());
+      st.setBoolean(9, transactions.isAmount_type());
       kq = st.executeUpdate();
       System.out.println("Bạn đã thực thi: " + sql);
       System.out.println("Có " + kq + " dòng bị thay đổi!");
@@ -112,7 +116,9 @@ public class transactionsDAO implements DAOInterface<transactions> {
         String transaction_date = rs.getString("transaction_date");
         Integer beneficiary_id = rs.getInt("beneficiary_id");
         boolean state = rs.getBoolean("state");
-        transactions tr = new transactions(transaction_id, account_id, transaction_type, amount, transaction_date, beneficiary_id, state);
+        String description = rs.getString("description");
+        boolean amount_type = rs.getBoolean("amount_type");
+        transactions tr = new transactions(transaction_id, account_id, transaction_type, amount, transaction_date, beneficiary_id, state, description, amount_type);
         kq.add(tr);
       }
       JDBCUtil.closeConnection(con);

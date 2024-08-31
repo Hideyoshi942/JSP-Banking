@@ -8,12 +8,14 @@ public class transactions {
   private String transaction_date;
   private int beneficiary_id;
   private boolean state;
+  private String description;
+  private boolean amount_type;
 
   public transactions() {
   }
 
   public transactions(int transaction_id, int account_id, String transaction_type, String amount,
-      String transaction_date, int beneficiary_id, boolean state) {
+      String transaction_date, int beneficiary_id, boolean state, String description, boolean amount_type) {
     this.transaction_id = transaction_id;
     this.account_id = account_id;
     this.transaction_type = transaction_type;
@@ -21,6 +23,24 @@ public class transactions {
     this.transaction_date = transaction_date;
     this.beneficiary_id = beneficiary_id;
     this.state = state;
+    this.description = description;
+    this.amount_type = amount_type;
+  }
+
+  public String getDescription() {
+    return description;
+  }
+
+  public void setDescription(String description) {
+    this.description = description;
+  }
+
+  public boolean isAmount_type() {
+    return amount_type;
+  }
+
+  public void setAmount_type(boolean amount_type) {
+    this.amount_type = amount_type;
   }
 
   public boolean isState() {

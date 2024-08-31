@@ -436,6 +436,7 @@ public class homeController extends HttpServlet {
       String account_number = request.getParameter("account_number");
       String account_name = request.getParameter("account_name");
       String account_amount = request.getParameter("account_amount");
+      String description = request.getParameter("description");
 
       String baoLoi = "";
       if (account_number == null || account_number.isEmpty() ||
@@ -449,19 +450,25 @@ public class homeController extends HttpServlet {
       beneficiaries be = (beneficiaries) session.getAttribute("be");
       accountDAO aDAO = new accountDAO();
       transactionsDAO tDAO = new transactionsDAO();
-      transactions tran;
+      transactions tran, tran2;
       Random random = new Random();
       System.out.println(ac.getAccount_id());
       System.out.println(be.getBeneficiary_id());
+      account objacc = aDAO.getAccountByAccountNumber(account_number);
       int transaction_id = 100000000 + random.nextInt(900000000);
+      int transaction_id2 = 100000000 + random.nextInt(900000000);
       if (baoLoi.isEmpty()) {
           if (aDAO.checkBalance(ac.getAccount_id(), account_amount)) {
-            aDAO.updateBalanceMinius(ac.getAccount_number(), account_amount); // account_number null
+            aDAO.updateBalanceMinius(ac.getAccount_number(), account_amount);
             aDAO.updateBalancePlus(account_number, account_amount);
-            tran = new transactions(transaction_id, ac.getAccount_id(), "Giao dịch", account_amount, String.valueOf(LocalDateTime.now()) ,be.getBeneficiary_id(), true);
+            tran = new transactions(transaction_id, ac.getAccount_id(), "Giao dịch", account_amount, String.valueOf(LocalDateTime.now()) ,be.getBeneficiary_id(), true, description, false);
+            tran2 = new transactions(transaction_id2, objacc.getAccount_id(), "Giao dịch", account_amount, String.valueOf(LocalDateTime.now()) ,be.getBeneficiary_id(), true, description, true);
             tDAO.insert(tran);
+            tDAO.insert(tran2);
             baoLoi = "Giao dịch thành công";
           } else {
+            tran = new transactions(transaction_id, ac.getAccount_id(), "Giao dịch", account_amount, String.valueOf(LocalDateTime.now()) ,be.getBeneficiary_id(), false, description, false);
+            tDAO.insert(tran);
             baoLoi = "Số dư không đủ";
           }
       }

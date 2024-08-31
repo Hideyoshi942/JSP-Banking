@@ -28,6 +28,8 @@ transaction_type: Loại giao dịch (Credit, Debit)
 amount: Số tiền
 transaction_date: Ngày giao dịch
 beneficiary_id: Số định danh người thụ hưởng (Foreign Key, có thể NULL)
+description: Nội dung giao dịch
+amount_type: Kiểu giao dịch (plus, minius)
 
 Bảng Beneficiaries
 beneficiary_id: Số định danh người thụ hưởng (Primary Key)

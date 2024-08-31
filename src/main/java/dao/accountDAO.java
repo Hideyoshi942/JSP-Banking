@@ -154,4 +154,30 @@ public class accountDAO implements DAOInterface<account>{
     return ketQua;
   }
 
+
+  public account getAccountByAccountNumber(String accountNumber) {
+    account kq = null;
+    try {
+      Connection con = JDBCUtil.getConnection();
+      String sql = "SELECT * FROM accounts WHERE account_number = ?";
+      PreparedStatement st = con.prepareStatement(sql);
+      st.setString(1, accountNumber);
+      System.out.println(sql);
+      ResultSet rs = st.executeQuery();
+      while (rs.next()) {
+        Integer user_id_account = rs.getInt("user_id_account");
+        Integer account_id = rs.getInt("account_id");
+        String account_number = rs.getString("account_number");
+        String account_type = rs.getString("account_type");
+        String balance = rs.getString("balance");
+        String created_at = rs.getString("created_at");
+        boolean state = rs.getBoolean("state");
+        kq = new account(account_id, user_id_account, account_number, account_type, balance, created_at, state);
+      }
+      JDBCUtil.closeConnection(con);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    return kq;
+  }
 }
