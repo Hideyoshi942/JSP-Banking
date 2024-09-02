@@ -6,6 +6,10 @@ public class services {
   private String description;
   private String fee;
 
+  public services() {
+
+  }
+
   public services(int service_id, String service_name, String description, String fee) {
     this.service_id = service_id;
     this.service_name = service_name;

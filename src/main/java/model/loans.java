@@ -8,6 +8,10 @@ public class loans {
   private String start_date;
   private String end_date;
 
+  public loans() {
+
+  }
+
   public loans(int loan_id, int user_id_loan, String loan_amount, double interest_rate,
       String start_date, String end_date) {
     this.loan_id = loan_id;

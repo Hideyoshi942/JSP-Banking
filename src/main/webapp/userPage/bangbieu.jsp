@@ -1,6 +1,9 @@
 <%@ page import="java.text.NumberFormat" %>
 <%@ page import="java.util.Locale" %>
 <%@ page import="java.math.BigDecimal" %>
+<%@ page import="java.util.Objects" %>
+<%@ page import="model.loans" %>
+<%@ page import="java.util.List" %>
 <%--
   Created by IntelliJ IDEA.
   User: Admin
@@ -68,6 +71,76 @@
     }
   } else {
       System.out.println("Không tìm thấy thông tin tài khoản. Vui lòng đăng nhập lại.");
+  }
+%>
+
+  <%
+    Object objl = session.getAttribute("l");
+    List<loans> loansList = null;
+    if(objl != null) {
+      loansList = (List<loans>) objl;
+    }
+    if (loansList != null && !loansList.isEmpty()) {
+        for (loans loan : loansList) {
+          try {
+            BigDecimal loanAmount = new BigDecimal(loan.getLoan_amount().trim());
+            BigDecimal interestRate = new BigDecimal(loan.getInterest_rate());
+
+            // Chuyển lãi suất từ phần trăm sang số thập phân
+            BigDecimal interestRateDecimal = interestRate.divide(new BigDecimal("100"));
+
+            // Tính tổng số tiền phải trả
+            BigDecimal totalPayment = loanAmount.add(loanAmount.multiply(interestRateDecimal));
+
+            // Định dạng số tiền thành dạng tiền tệ
+            NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
+            String formattedTotalPayment = currencyFormatter.format(totalPayment);
+  %>
+<div class="account-info-container">
+  <h2>Vay nợ ngân hàng</h2>
+  <table>
+    <tr>
+      <th>Số Tài Khoản</th>
+      <td><%=a.getAccount_number()%></td>
+    </tr>
+    <tr>
+      <th>Chủ Tài Khoản</th>
+      <td><%=u.getUsername()%></td>
+    </tr>
+    <tr>
+      <th>Mã số vay</th>
+      <td><%=loan.getLoan_id()%></td>
+    </tr>
+    <tr>
+      <th>Số tiền vay</th>
+      <td class="balance"><%=currencyFormatter.format(loanAmount)%></td>
+    </tr>
+    <tr>
+      <th>Thời gian bắt đầu vay</th>
+      <td><%=loan.getStart_date()%></td>
+    </tr>
+    <tr>
+      <th>Thời gian kết thúc vay</th>
+      <td><%=loan.getEnd_date()%></td>
+    </tr>
+    <tr>
+      <th>Lãi suất (%)</th>
+      <td><%=loan.getInterest_rate()%></td>
+    </tr>
+    <tr>
+      <th>Tổng tiền phải trả</th>
+      <td class="balance"><%=formattedTotalPayment%></td>
+    </tr>
+  </table>
+  <button type="submit" class="btn-loans">Thanh toán tiền</button>
+</div>
+<%
+      } catch (NumberFormatException e) {
+        System.out.println("Dữ liệu không hợp lệ");
+      }
+    }
+  } else {
+    System.out.println("Không tìm thấy thông tin khoản vay. Vui lòng đăng nhập lại.");
   }
 %>
 </body>

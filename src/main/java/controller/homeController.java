@@ -2,6 +2,8 @@ package controller;
 
 import dao.accountDAO;
 import dao.beneficiariesDAO;
+import dao.loansDAO;
+import dao.servicesDAO;
 import dao.transactionsDAO;
 import dao.userDAO;
 import java.io.PrintWriter;
@@ -18,6 +20,8 @@ import javax.servlet.annotation.*;
 import java.io.IOException;
 import model.account;
 import model.beneficiaries;
+import model.loans;
+import model.services;
 import model.transactions;
 import model.user;
 import until.Email;
@@ -50,6 +54,8 @@ public class homeController extends HttpServlet {
       doiThongTinCaNhan(request, response);
     } else if (hanhDong.equals("giao-dich")) {
       giaoDich(request, response);
+    } else if (hanhDong.equals("vay-tien")) {
+      vayTien(request, response);
     }
   }
 
@@ -73,17 +79,23 @@ public class homeController extends HttpServlet {
       accountDAO accountDAO = new accountDAO();
       beneficiariesDAO beneficiariesDAO = new beneficiariesDAO();
       transactionsDAO tDAO = new transactionsDAO();
+      loansDAO lDAO = new loansDAO();
+      servicesDAO svDAO = new servicesDAO();
       user us = uDAO.selectByPhonenumberAndPassword(u);
       String url = "";
       if (us != null && us.getType_user().equals("user")) {
         account ac = accountDAO.getAccountByUserId(String.valueOf(us.getUser_id()));
         beneficiaries be = beneficiariesDAO.getAccountByUserId(String.valueOf(us.getUser_id()));
         ArrayList<transactions> tr = tDAO.getAccountByUserId(String.valueOf((ac.getAccount_id())));
+        ArrayList<loans> l = lDAO.selectByUserId(String.valueOf(us.getUser_id()));
+        ArrayList<services> sv = svDAO.selectAll();
         HttpSession session = request.getSession();
         session.setAttribute("us", us);
         session.setAttribute("ac", ac);
         session.setAttribute("be", be);
         session.setAttribute("tr", tr);
+        session.setAttribute("l", l);
+        session.setAttribute("sv", sv);
         url = "/userPage/homePageUser.jsp";
       } else  if (us != null && us.getType_user().equals("admin")) {
           HttpSession session = request.getSession();
@@ -486,6 +498,56 @@ public class homeController extends HttpServlet {
       e.printStackTrace();
     }
   }
+
+  private void vayTien(HttpServletRequest request, HttpServletResponse response) {
+    try {
+      String loan_amount = request.getParameter("loan-amount");
+      String start_date = request.getParameter("start-date");
+      String end_date = request.getParameter("end-date");
+      String interest_rate = request.getParameter("interest-rate");
+
+      String baoLoi = "";
+
+      HttpSession session = request.getSession();
+      user us = (user) session.getAttribute("us");
+
+      if (loan_amount == null || loan_amount.isEmpty() || start_date == null || start_date.isEmpty() || end_date == null || end_date.isEmpty() || interest_rate == null || interest_rate.isEmpty()) {
+        baoLoi = "Vui lòng điền đầy đủ thông tin";
+      }
+
+      loans loan;
+      loansDAO lDAO = new loansDAO();
+      accountDAO aDAO = new accountDAO();
+      account ac = (account) session.getAttribute("ac");
+      transactionsDAO tDAO = new transactionsDAO();
+      transactions tc = (transactions) session.getAttribute("tc");
+      beneficiaries be = (beneficiaries) session.getAttribute("be");
+      if (baoLoi.isEmpty()) {
+        Random random = new Random();
+        int loan_id = 100000000 + random.nextInt(900000000);
+        int transaction_id = 100000000 + random.nextInt(900000000);
+        loan = new loans(loan_id, us.getUser_id(), loan_amount, Double.parseDouble(interest_rate), start_date, end_date);
+        lDAO.insert(loan);
+        aDAO.updateBalancePlus(ac.getAccount_number(), loan_amount);
+        tc = new transactions(transaction_id, ac.getAccount_id(), "Vay Tiền", loan_amount, String.valueOf(LocalDateTime.now()), be.getBeneficiary_id(), true, "Bạn đã vay tiền", true);
+        tDAO.insert(tc);
+
+        baoLoi = "Vay tien thanh cong";
+
+      } else {
+        baoLoi = "Vay tien that bai";
+      }
+
+      request.setAttribute("baoLoi", baoLoi);
+      RequestDispatcher rd = getServletContext().getRequestDispatcher("/userPage/vayThanhCong.jsp");
+      rd.forward(request, response);
+    } catch (ServletException e) {
+      e.printStackTrace();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
+
 
   public static String getNoiDungEmailXacThuc(user u) {
     String link = "http://localhost:8080/JSP_Banking_war/khach-hang?hanhDong=xac-thuc&user_id=" + u.getUser_id() + "&verification_code=" + u.getVerification_code();
