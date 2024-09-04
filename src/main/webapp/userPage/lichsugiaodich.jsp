@@ -12,6 +12,7 @@
 <div class="container transaction-history-container">
     <div class="header">Lịch Sử Giao Dịch</div>
     <%
+        response.setIntHeader("Refresh", 5);
         Object objtr = session.getAttribute("tr");
         List<transactions> transactionList = null;
         if(objtr != null) {

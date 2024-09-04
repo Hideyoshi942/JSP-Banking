@@ -56,6 +56,8 @@ public class homeController extends HttpServlet {
       giaoDich(request, response);
     } else if (hanhDong.equals("vay-tien")) {
       vayTien(request, response);
+    } else if (hanhDong.equals("tra-no")) {
+      traNo(request, response);
     }
   }
 
@@ -540,6 +542,56 @@ public class homeController extends HttpServlet {
 
       request.setAttribute("baoLoi", baoLoi);
       RequestDispatcher rd = getServletContext().getRequestDispatcher("/userPage/vayThanhCong.jsp");
+      rd.forward(request, response);
+    } catch (ServletException e) {
+      e.printStackTrace();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
+
+  private void traNo(HttpServletRequest request, HttpServletResponse response) {
+    try {
+      HttpSession session = request.getSession();
+      account ac = (account) session.getAttribute("ac");
+
+      Object lObj = session.getAttribute("l");
+      loans l;
+
+      if (lObj instanceof ArrayList) {
+        ArrayList<loans> loanList = (ArrayList<loans>) lObj;
+        l = loanList.get(0);
+      } else {
+        l = (loans) lObj;
+      }
+
+      beneficiaries be = (beneficiaries) session.getAttribute("be");
+      accountDAO aDAO = new accountDAO();
+      transactions tran;
+      transactionsDAO tDAO = new transactionsDAO();
+      loansDAO lDAO = new loansDAO();
+      Random random = new Random();
+      int transaction_id = 100000000 + random.nextInt(900000000);
+      Double interest_amount = Double.parseDouble(l.getLoan_amount()) +  (Double.parseDouble(l.getLoan_amount()) * l.getInterest_rate() / 100);
+      loans lDelete = new loans(l.getLoan_id(), ac.getAccount_id(), l.getLoan_amount(), l.getInterest_rate(), l.getStart_date(), l.getEnd_date());
+      String baoLoi = "";
+
+      if (aDAO.checkBalance(ac.getAccount_id(), ac.getBalance())) {
+        aDAO.updateBalanceMinius(ac.getAccount_number(), l.getLoan_amount());
+        tran = new transactions(transaction_id, ac.getAccount_id(), "Trả nợ", interest_amount.toString(),
+            String.valueOf(LocalDateTime.now()), be.getBeneficiary_id(), true, "Trả nợ ngân hàng", false);
+        tDAO.insert(tran);
+        lDAO.delete(lDelete);
+        baoLoi = "Trả nợ thành công";
+      } else {
+        tran = new transactions(transaction_id, ac.getAccount_id(), "Giao dịch", interest_amount.toString(),
+            String.valueOf(LocalDateTime.now()), be.getBeneficiary_id(), false, "Trả nợ ngân hàng", false);
+        tDAO.insert(tran);
+        baoLoi = "Số dư không đủ";
+      }
+
+      request.setAttribute("baoLoi", baoLoi);
+      RequestDispatcher rd = getServletContext().getRequestDispatcher("/userPage/traNoThanhCong.jsp");
       rd.forward(request, response);
     } catch (ServletException e) {
       e.printStackTrace();

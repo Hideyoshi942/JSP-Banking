@@ -14,9 +14,9 @@
     <title>Vay tiền online</title>
     <link rel="stylesheet" href="/JSP_Banking_war/assets/css/userCss/loans.css">
     <style>
-        .red {
-          color: red;
-        }
+      .red {
+        color: red;
+      }
     </style>
 </head>
 
@@ -27,9 +27,6 @@
 
     String loan_amount = request.getAttribute("loan-amount") + "";
     loan_amount = (loan_amount != null) ? "" : loan_amount;
-
-    String start_date = request.getAttribute("start-date") + "";
-    start_date = (start_date != null) ? "" : start_date;
 
     String end_date = request.getAttribute("end-date") + "";
     end_date = (end_date != null) ? "" : end_date;
@@ -49,10 +46,10 @@
             <input type="text" id="loan-amount" name="loan-amount" placeholder="Enter loan amount" required value="<%=loan_amount%>">
 
             <label for="start-date">Ngày bắt đầu</label>
-            <input type="date" id="start-date" name="start-date" onchange="calculateInterestRate()" required value="<%=start_date%>">
+            <input type="datetime-local" id="start-date" name="start-date" readonly required>
 
             <label for="end-date">Ngày kết thúc</label>
-            <input type="date" id="end-date" name="end-date" onchange="calculateInterestRate()" required value="<%=end_date%>">
+            <input type="datetime-local" id="end-date" name="end-date" onchange="calculateInterestRate()" required value="<%=end_date%>">
 
             <label for="interest-rate">Lãi suất (%)</label>
             <input type="number" id="interest-rate" name="interest-rate" placeholder="Interest rate" step="0.01" readonly required value="<%=interest_rate%>">
@@ -62,6 +59,19 @@
     </div>
 </div>
 <script>
+  document.addEventListener("DOMContentLoaded", function() {
+    const startDateInput = document.getElementById('start-date');
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0'); // Tháng bắt đầu từ 0
+    const day = String(now.getDate()).padStart(2, '0');
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+
+    const formattedDateTime = `${year}-${month}-${day}T${hours}:${minutes}`;
+    startDateInput.value = formattedDateTime;
+  });
+
   function calculateInterestRate() {
     const startDate = new Date(document.getElementById('start-date').value);
     const endDate = new Date(document.getElementById('end-date').value);

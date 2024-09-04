@@ -42,7 +42,7 @@ body {
 }
 
 .loan-form-container input[type="text"],
-.loan-form-container input[type="date"],
+.loan-form-container input[type="datetime-local"],
 .loan-form-container input[type="number"] {
     width: 100%;
     padding: 12px;
@@ -55,7 +55,7 @@ body {
 }
 
 .loan-form-container input[type="text"]:focus,
-.loan-form-container input[type="date"]:focus,
+.loan-form-container input[type="datetime-local"]:focus,
 .loan-form-container input[type="number"]:focus {
     border-color: #74ebd5;
     box-shadow: 0 0 5px rgba(116, 235, 213, 0.5);

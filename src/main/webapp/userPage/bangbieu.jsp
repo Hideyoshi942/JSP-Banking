@@ -75,6 +75,7 @@
 %>
 
   <%
+    response.setIntHeader("Refresh", 5);
     Object objl = session.getAttribute("l");
     List<loans> loansList = null;
     if(objl != null) {
@@ -96,44 +97,47 @@
             NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
             String formattedTotalPayment = currencyFormatter.format(totalPayment);
   %>
-<div class="account-info-container">
-  <h2>Vay nợ ngân hàng</h2>
-  <table>
-    <tr>
-      <th>Số Tài Khoản</th>
-      <td><%=a.getAccount_number()%></td>
-    </tr>
-    <tr>
-      <th>Chủ Tài Khoản</th>
-      <td><%=u.getUsername()%></td>
-    </tr>
-    <tr>
-      <th>Mã số vay</th>
-      <td><%=loan.getLoan_id()%></td>
-    </tr>
-    <tr>
-      <th>Số tiền vay</th>
-      <td class="balance"><%=currencyFormatter.format(loanAmount)%></td>
-    </tr>
-    <tr>
-      <th>Thời gian bắt đầu vay</th>
-      <td><%=loan.getStart_date()%></td>
-    </tr>
-    <tr>
-      <th>Thời gian kết thúc vay</th>
-      <td><%=loan.getEnd_date()%></td>
-    </tr>
-    <tr>
-      <th>Lãi suất (%)</th>
-      <td><%=loan.getInterest_rate()%></td>
-    </tr>
-    <tr>
-      <th>Tổng tiền phải trả</th>
-      <td class="balance"><%=formattedTotalPayment%></td>
-    </tr>
-  </table>
-  <button type="submit" class="btn-loans">Thanh toán tiền</button>
-</div>
+<form action="<%=url%>/khach-hang" method="post">
+  <input type="hidden" name="hanhDong" value="tra-no">
+  <div class="account-info-container">
+    <h2>Vay nợ ngân hàng</h2>
+    <table>
+      <tr>
+        <th>Số Tài Khoản</th>
+        <td><%=a.getAccount_number()%></td>
+      </tr>
+      <tr>
+        <th>Chủ Tài Khoản</th>
+        <td><%=u.getUsername()%></td>
+      </tr>
+      <tr>
+        <th>Mã số vay</th>
+        <td><%=loan.getLoan_id()%></td>
+      </tr>
+      <tr>
+        <th>Số tiền vay</th>
+        <td class="balance"><%=currencyFormatter.format(loanAmount)%></td>
+      </tr>
+      <tr>
+        <th>Thời gian bắt đầu vay</th>
+        <td><%=loan.getStart_date()%></td>
+      </tr>
+      <tr>
+        <th>Thời gian kết thúc vay</th>
+        <td><%=loan.getEnd_date()%></td>
+      </tr>
+      <tr>
+        <th>Lãi suất (%)</th>
+        <td><%=loan.getInterest_rate()%></td>
+      </tr>
+      <tr>
+        <th>Tổng tiền phải trả</th>
+        <td class="balance"><%=formattedTotalPayment%></td>
+      </tr>
+    </table>
+    <button type="submit" class="btn-loans">Thanh toán tiền</button>
+  </div>
+</form>
 <%
       } catch (NumberFormatException e) {
         System.out.println("Dữ liệu không hợp lệ");
