@@ -26,7 +26,7 @@
                     </div>
                     <div class="col-sm-4 itemUser">
                         <div class="boderItemUser">
-                            <a href="#"><i class="fa-solid fa-piggy-bank"></i>
+                            <a href="<%=url%>/userPage/guiTien.jsp"><i class="fa-solid fa-piggy-bank"></i>
                                 <br/>Mở sổ tiết kiệm</a>
                         </div>
                     </div>

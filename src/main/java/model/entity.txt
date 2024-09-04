@@ -51,3 +51,15 @@ loan_amount: Số tiền vay
 interest_rate: Lãi suất
 start_date: Ngày bắt đầu vay
 end_date: Ngày kết thúc vay
+
+Bảng Saving
+saving_id:
+saving_user_id:
+saving_account_id:
+saving_number:
+account_type:
+balance:
+create_at:
+interest_rate:
+time_saving:
+state:

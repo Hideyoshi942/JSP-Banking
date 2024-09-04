@@ -4,6 +4,7 @@
 <%@ page import="java.util.Objects" %>
 <%@ page import="model.loans" %>
 <%@ page import="java.util.List" %>
+<%@ page import="model.saving" %>
 <%--
   Created by IntelliJ IDEA.
   User: Admin
@@ -75,7 +76,6 @@
 %>
 
   <%
-    response.setIntHeader("Refresh", 5);
     Object objl = session.getAttribute("l");
     List<loans> loansList = null;
     if(objl != null) {
@@ -136,6 +136,79 @@
       </tr>
     </table>
     <button type="submit" class="btn-loans">Thanh toán tiền</button>
+  </div>
+</form>
+<%
+      } catch (NumberFormatException e) {
+        System.out.println("Dữ liệu không hợp lệ");
+      }
+    }
+  } else {
+    System.out.println("Không tìm thấy thông tin khoản vay. Vui lòng đăng nhập lại.");
+  }
+%>
+
+<%
+  Object objsav = session.getAttribute("sav");
+  List<saving> savingList = null;
+  if(objsav != null) {
+    savingList = (List<saving>) objsav;
+  }
+  if (savingList != null && !savingList.isEmpty()) {
+    for (saving sav : savingList) {
+      try {
+        BigDecimal loanAmount = new BigDecimal(sav.getBalance().trim());
+        BigDecimal interestRate = new BigDecimal(sav.getInterest_rate());
+
+        // Chuyển lãi suất từ phần trăm sang số thập phân
+        BigDecimal interestRateDecimal = interestRate.divide(new BigDecimal("100"));
+
+        // Tính tổng số tiền phải trả
+        BigDecimal totalPayment = loanAmount.add(loanAmount.multiply(interestRateDecimal));
+        // Định dạng số tiền thành dạng tiền tệ
+        NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
+        String formattedTotalPayment = currencyFormatter.format(totalPayment);
+        String formattedBalance = currencyFormatter.format(loanAmount);
+%>
+<form action="<%=url%>/khach-hang" method="post">
+  <input type="hidden" name="hanhDong" value="rut-tiet-kiem">
+  <div class="account-info-container">
+    <h2>Tài khoản tiết kiệm</h2>
+    <table>
+      <tr>
+        <th>Số Tài Khoản</th>
+        <td><%=sav.getAccount_number()%></td>
+      </tr>
+      <tr>
+        <th>Chủ Tài Khoản</th>
+        <td><%=u.getUsername()%></td>
+      </tr>
+      <tr>
+        <th>Loại tài khoản</th>
+        <td><%=sav.getAccount_type()%></td>
+      </tr>
+      <tr>
+        <th>Số tiền tiết kiệm</th>
+        <td class="balance"><%=formattedBalance%></td>
+      </tr>
+      <tr>
+        <th>Thời gian bắt đầu tiết kiệm</th>
+        <td><%=sav.getCreated_at()%></td>
+      </tr>
+      <tr>
+        <th>Thời gian tiết kiệm</th>
+        <td><%=sav.getTime_saving()%> ngày</td>
+      </tr>
+      <tr>
+        <th>Lãi suất (%)</th>
+        <td><%=sav.getInterest_rate()%></td>
+      </tr>
+      <tr>
+        <th>Tổng tiền tiết kiệm</th>
+        <td class="balance"><%=formattedTotalPayment%></td>
+      </tr>
+    </table>
+    <button type="submit" class="btn-loans">Rút tiết kiệm</button>
   </div>
 </form>
 <%

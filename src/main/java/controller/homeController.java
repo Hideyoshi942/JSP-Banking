@@ -3,6 +3,7 @@ package controller;
 import dao.accountDAO;
 import dao.beneficiariesDAO;
 import dao.loansDAO;
+import dao.savingDAO;
 import dao.servicesDAO;
 import dao.transactionsDAO;
 import dao.userDAO;
@@ -21,6 +22,7 @@ import java.io.IOException;
 import model.account;
 import model.beneficiaries;
 import model.loans;
+import model.saving;
 import model.services;
 import model.transactions;
 import model.user;
@@ -58,6 +60,8 @@ public class homeController extends HttpServlet {
       vayTien(request, response);
     } else if (hanhDong.equals("tra-no")) {
       traNo(request, response);
+    } else if (hanhDong.equals("gui-tiet-kiem")) {
+      guiTietKiem(request, response);
     }
   }
 
@@ -83,6 +87,7 @@ public class homeController extends HttpServlet {
       transactionsDAO tDAO = new transactionsDAO();
       loansDAO lDAO = new loansDAO();
       servicesDAO svDAO = new servicesDAO();
+      savingDAO savDAO = new savingDAO();
       user us = uDAO.selectByPhonenumberAndPassword(u);
       String url = "";
       if (us != null && us.getType_user().equals("user")) {
@@ -91,6 +96,7 @@ public class homeController extends HttpServlet {
         ArrayList<transactions> tr = tDAO.getAccountByUserId(String.valueOf((ac.getAccount_id())));
         ArrayList<loans> l = lDAO.selectByUserId(String.valueOf(us.getUser_id()));
         ArrayList<services> sv = svDAO.selectAll();
+        ArrayList<saving> sav = savDAO.selectByUserId(String.valueOf(ac.getAccount_id()));
         HttpSession session = request.getSession();
         session.setAttribute("us", us);
         session.setAttribute("ac", ac);
@@ -98,6 +104,7 @@ public class homeController extends HttpServlet {
         session.setAttribute("tr", tr);
         session.setAttribute("l", l);
         session.setAttribute("sv", sv);
+        session.setAttribute("sav", sav);
         url = "/userPage/homePageUser.jsp";
       } else  if (us != null && us.getType_user().equals("admin")) {
           HttpSession session = request.getSession();
@@ -572,7 +579,7 @@ public class homeController extends HttpServlet {
       loansDAO lDAO = new loansDAO();
       Random random = new Random();
       int transaction_id = 100000000 + random.nextInt(900000000);
-      Double interest_amount = Double.parseDouble(l.getLoan_amount()) +  (Double.parseDouble(l.getLoan_amount()) * l.getInterest_rate() / 100);
+      Integer interest_amount = (int) (Integer.parseInt(l.getLoan_amount()) +  (Integer.parseInt(l.getLoan_amount()) * l.getInterest_rate() / 100));
       loans lDelete = new loans(l.getLoan_id(), ac.getAccount_id(), l.getLoan_amount(), l.getInterest_rate(), l.getStart_date(), l.getEnd_date());
       String baoLoi = "";
 
@@ -592,6 +599,53 @@ public class homeController extends HttpServlet {
 
       request.setAttribute("baoLoi", baoLoi);
       RequestDispatcher rd = getServletContext().getRequestDispatcher("/userPage/traNoThanhCong.jsp");
+      rd.forward(request, response);
+    } catch (ServletException e) {
+      e.printStackTrace();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
+
+  private void guiTietKiem(HttpServletRequest request, HttpServletResponse response) {
+    try {
+      String depositAmount = request.getParameter("depositAmount");
+      String monthAmount = request.getParameter("monthAmount");
+      String interestRateAmount = request.getParameter("interestRateAmount");
+
+      String baoLoi = "";
+      HttpSession session = request.getSession();
+      account ac = (account) session.getAttribute("ac");
+      beneficiaries be = (beneficiaries) session.getAttribute("be");
+      saving sav;
+      transactions tr;
+      accountDAO aDAO = new accountDAO();
+      savingDAO savDAO = new savingDAO();
+      transactionsDAO tDAO = new transactionsDAO();
+      Random random = new Random();
+      int saving_id = 100000000 + random.nextInt(900000000);
+      int transaction_id = 100000000 + random.nextInt(900000000);
+      long saving_number = 1000000000000000L + (long) (random.nextDouble() * 9000000000000000L);
+
+      if (aDAO.checkBalance(ac.getAccount_id(), depositAmount)) {
+        aDAO.updateBalanceMinius(ac.getAccount_number(), depositAmount);
+        sav = new saving(saving_id, ac.getUser_id_account(), ac.getAccount_id(),
+            String.valueOf(saving_number), "Tiết kiệm", depositAmount,
+            LocalDateTime.now().toString(), Double.parseDouble(interestRateAmount), monthAmount,
+            true);
+        savDAO.insert(sav);
+        tr = new transactions(transaction_id, ac.getAccount_id(), "Gửi tiết kiệm", depositAmount,
+            LocalDateTime.now().toString(), be.getBeneficiary_id(), true, "Gửi tiết kiệm", false);
+        tDAO.insert(tr);
+        baoLoi = "Gửi tiết kiệm thanh cong";
+      } else {
+        tr = new transactions(transaction_id, ac.getAccount_id(), "Gửi tiết kiệm", depositAmount,
+            LocalDateTime.now().toString(), be.getBeneficiary_id(), true, "Gửi tiết kiệm", true);
+        tDAO.insert(tr);
+        baoLoi = "Gửi tiết kiệm that bai";
+      }
+      request.setAttribute("baoLoi", baoLoi);
+      RequestDispatcher rd = getServletContext().getRequestDispatcher("/userPage/thanhCong.jsp");
       rd.forward(request, response);
     } catch (ServletException e) {
       e.printStackTrace();
