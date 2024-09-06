@@ -10,7 +10,7 @@
 <%@ page import="java.util.Locale" %>
 <%@ page import="java.math.BigDecimal" %>
 <!DOCTYPE html>
-<html lang="en">
+<html>
 
 <head>
     <title>Bank Transaction</title>

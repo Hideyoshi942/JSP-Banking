@@ -1,6 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
     <title>Đăng ký</title>
     <link rel="stylesheet" href="/JSP_Banking_war/assets/css/bootstrap.min.css">

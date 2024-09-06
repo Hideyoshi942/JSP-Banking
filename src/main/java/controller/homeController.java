@@ -62,12 +62,16 @@ public class homeController extends HttpServlet {
       traNo(request, response);
     } else if (hanhDong.equals("gui-tiet-kiem")) {
       guiTietKiem(request, response);
+    } else if (hanhDong.equals("rut-tiet-kiem")) {
+      rutTietKiem(request, response);
     }
   }
 
   @Override
   protected void doPost(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
+    request.setCharacterEncoding("UTF-8");
+    response.setCharacterEncoding("UTF-8");
     doGet(request, response);
   }
 
@@ -654,6 +658,56 @@ public class homeController extends HttpServlet {
     }
   }
 
+  private void rutTietKiem(HttpServletRequest request, HttpServletResponse response) {
+    try {
+      HttpSession session = request.getSession();
+      account ac = (account) session.getAttribute("ac");
+
+      Object objsav = session.getAttribute("sav");
+      saving sav;
+
+      if (objsav instanceof ArrayList) {
+        ArrayList<saving> savingList = (ArrayList<saving>) objsav;
+        sav = savingList.get(0);
+      } else {
+        sav = (saving) objsav;
+      }
+
+      beneficiaries be = (beneficiaries) session.getAttribute("be");
+      accountDAO aDAO = new accountDAO();
+      transactions tran;
+      transactionsDAO tDAO = new transactionsDAO();
+      savingDAO savDAO = new savingDAO();
+      Random random = new Random();
+      int transaction_id = 100000000 + random.nextInt(900000000);
+      Integer interest_amount = (int) (Integer.parseInt(sav.getBalance()) +  (Integer.parseInt(sav.getBalance()) * sav.getInterest_rate() / 100));
+      String baoLoi = "";
+
+      if (savDAO.checkTimeSaving(sav.getSaving_id(), LocalDateTime.now().toLocalDate())) {
+        aDAO.updateBalancePlus(ac.getAccount_number(), String.valueOf(interest_amount));
+        tran = new transactions(transaction_id, ac.getAccount_id(), "Rút tiền tiết kiệm", interest_amount.toString(),
+            String.valueOf(LocalDateTime.now()), be.getBeneficiary_id(), true, "Bạn đã rút tiền tiết kiệm", false);
+        tDAO.insert(tran);
+        savDAO.deleteBySavingId(String.valueOf(sav.getSaving_id()));
+        baoLoi = "Rút tiền thành công";
+      } else {
+        aDAO.updateBalancePlus(ac.getAccount_number(), sav.getBalance());
+        tran = new transactions(transaction_id, ac.getAccount_id(), "Rút tiền tiết kiệm", sav.getBalance(),
+            String.valueOf(LocalDateTime.now()), be.getBeneficiary_id(), true, "Bạn đã rút tiền tiết kiệm", false);
+        tDAO.insert(tran);
+        savDAO.deleteBySavingId(String.valueOf(sav.getSaving_id()));
+        baoLoi = "Rút tiền thành công";
+      }
+
+      request.setAttribute("baoLoi", baoLoi);
+      RequestDispatcher rd = getServletContext().getRequestDispatcher("/userPage/traNoThanhCong.jsp");
+      rd.forward(request, response);
+    } catch (ServletException e) {
+      e.printStackTrace();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
 
   public static String getNoiDungEmailXacThuc(user u) {
     String link = "http://localhost:8080/JSP_Banking_war/khach-hang?hanhDong=xac-thuc&user_id=" + u.getUser_id() + "&verification_code=" + u.getVerification_code();

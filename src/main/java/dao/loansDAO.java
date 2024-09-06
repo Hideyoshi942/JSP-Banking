@@ -138,4 +138,21 @@ public class loansDAO implements DAOInterface<loans> {
     }
     return loansList;
   }
+
+  public int deleteByLoanId(String loanId) {
+    int kq = 0;
+    try {
+      Connection con = JDBCUtil.getConnection();
+      String sql = "DELETE FROM loans where loan_id = ?";
+      PreparedStatement st = con.prepareStatement(sql);
+      st.setInt(1, Integer.parseInt(loanId));
+      kq = st.executeUpdate();
+      System.out.println("Bạn đã thực thi: " + sql);
+      System.out.println("Có " + kq + " dòng bị thay đổi!");
+      con.close();
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    return kq;
+  }
 }

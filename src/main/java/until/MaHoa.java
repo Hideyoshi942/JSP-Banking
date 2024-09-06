@@ -8,7 +8,7 @@ public class MaHoa {
   // md5
   // sha-1 => thường được sử dụng
   public static String toSHA1(String str) {
-    String salt = "asjrlkmcoewj@tjle;oxqskjhdjksjf1jurVn";// Làm cho mật khẩu phức tap
+    String salt = "asjrlkmcoewj@tjle;oxqskjhdjksjf1jurVn";
     String result = null;
 
     str = str + salt;

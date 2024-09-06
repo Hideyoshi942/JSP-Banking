@@ -1,8 +1,13 @@
 package dao;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import model.account;
 import model.loans;
@@ -134,6 +139,57 @@ public class savingDAO implements DAOInterface<saving> {
       e.printStackTrace();
     }
     return savingList;
+  }
+
+  public boolean checkTimeSaving(int accountId, LocalDate currentDate) {
+    boolean ketQua = false;
+    try {
+      // Mở kết nối với cơ sở dữ liệu
+      Connection con = JDBCUtil.getConnection();
+
+      // Truy vấn dữ liệu
+      String sql = "SELECT create_at, time_saving FROM accounts WHERE saving_id=?";
+      PreparedStatement st = con.prepareStatement(sql);
+      st.setInt(1, accountId);
+      System.out.println(sql);
+
+      ResultSet rs = st.executeQuery();
+      if (rs.next()) {
+        String createAtStr = rs.getString("create_at");
+        LocalDate dateSaving = LocalDate.parse(createAtStr, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+
+        int timeSavingMonths = rs.getInt("time_saving");
+
+        LocalDate expirationDate = dateSaving.plusMonths(timeSavingMonths);
+
+        if (currentDate.isAfter(expirationDate)) {
+          ketQua = true;
+        }
+      }
+
+      // Đóng kết nối cơ sở dữ liệu
+      JDBCUtil.closeConnection(con);
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+    return ketQua;
+  }
+
+  public int deleteBySavingId(String savingId) {
+    int kq = 0;
+    try {
+      Connection con = JDBCUtil.getConnection();
+      String sql = "DELETE FROM saving_accounts where saving_id = ?";
+      PreparedStatement st = con.prepareStatement(sql);
+      st.setInt(1, Integer.parseInt(savingId));
+      kq = st.executeUpdate();
+      System.out.println("Bạn đã thực thi: " + sql);
+      System.out.println("Có " + kq + " dòng bị thay đổi!");
+      con.close();
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    return kq;
   }
 }
 
