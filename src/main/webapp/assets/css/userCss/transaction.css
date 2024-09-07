@@ -36,3 +36,57 @@ body {
   margin-right: 10px;
   color: #007bff;
 }
+
+.red {
+  color: red;
+}
+
+/* Modal Styles */
+.modal {
+  display: none; /* Ẩn modal theo mặc định */
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Màu nền đen trong suốt */
+  opacity: 0;
+  transition: opacity 0.3s ease; /* Thêm hiệu ứng chuyển động */
+}
+
+.modal.show {
+  display: block; /* Hiển thị modal khi có class "show" */
+  opacity: 1;
+}
+
+.modal-content {
+  background-color: #fff;
+  margin: 15% auto;
+  padding: 20px;
+  border-radius: 10px;
+  width: 90%; /* Đặt rộng 90% để tốt hơn trên các thiết bị nhỏ */
+  max-width: 500px; /* Giới hạn chiều rộng tối đa cho các màn hình lớn */
+  text-align: center;
+  position: relative; /* Để hỗ trợ đặt nút close */
+}
+
+.close {
+  color: #aaa;
+  position: absolute; /* Đảm bảo nút đóng luôn ở góc */
+  right: 20px; /* Canh phải 20px */
+  top: 20px; /* Canh trên 20px */
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.modal-content button {
+  margin: 5px;
+}

@@ -16,19 +16,19 @@
     <title>Bank Transaction</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"/>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="/JSP_Banking_war/assets/css/userCss/transaction.css"/>
+    <link rel="stylesheet" href="../assets/css/userCss/transaction.css"/>
     <script>
-      // Hiển thị modal nhập mật khẩu
-      function showPasswordModal() {
+        // Hiển thị modal nhập mật khẩu
+        function showPasswordModal() {
         var modal = document.getElementById("passwordModal");
         modal.classList.add("show");
-      }
+        }
 
-      // Đóng modal
-      function closeModal() {
+        // Đóng modal
+        function closeModal() {
         var modal = document.getElementById("passwordModal");
         modal.classList.remove("show");
-      }
+        }
 
     </script>
 </head>
@@ -92,9 +92,7 @@
             <input type="text" class="form-control" id="description" name="description" placeholder="Enter description" required value="<%=description%>">
         </div>
         <!-- Nút Submit -->
-        <button type="button" class="btn btn-primary" onclick="showPasswordModal()">
-        <i class="fa-solid fa-paper-plane"></i> Giao Dịch
-    </button>
+        <button type="button" class="btn btn-primary" onclick="showPasswordModal()"><i class="fa-solid fa-paper-plane"></i> Giao Dịch</button>
     </form>
     <%
             } catch (NumberFormatException e) {
@@ -106,17 +104,17 @@
     %>
 </div>
 
-<!-- Modal nhập mật khẩu -->
+<!-- Modal Hộp Thoại Nhập Mật Khẩu -->
 <div id="passwordModal" class="modal">
     <div class="modal-content">
         <span class="close" onclick="closeModal()">&times;</span>
-        <h3>Nhập mật khẩu của bạn</h3>
-        <input type="password" class="form-control" id="password" placeholder="Nhập mật khẩu">
-        <button type="button" class="btn btn-primary" onclick="confirmTransaction()">Xác Nhận</button>
-        <button type="button" class="btn btn-secondary" onclick="closeModal()">Hủy</button>
+        <h4>Nhập Mật Khẩu</h4>
+        <input type="password" id="passwordInput" class="form-control" placeholder="Nhập mật khẩu của bạn">
+        <br>
+        <button style="margin-bottom: 5px;" class="btn btn-success" onclick="confirmPassword(event)">Xác Nhận</button>
+        <button class="btn btn-secondary" onclick="closeModal()">Hủy</button>
     </div>
 </div>
-
 
 </body>
 
