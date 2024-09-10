@@ -9,8 +9,12 @@ import dao.transactionsDAO;
 import dao.userDAO;
 import java.io.PrintWriter;
 import java.sql.Date;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Objects;
@@ -30,6 +34,7 @@ import until.Email;
 import until.MaHoa;
 import until.SoNgauNhien;
 import until.passwordGenerate;
+import java.text.SimpleDateFormat;
 
 @WebServlet("/khach-hang")
 public class homeController extends HttpServlet {
@@ -64,6 +69,8 @@ public class homeController extends HttpServlet {
       guiTietKiem(request, response);
     } else if (hanhDong.equals("rut-tiet-kiem")) {
       rutTietKiem(request, response);
+    } else if (hanhDong.equals("xac-thuc-giao-dich")) {
+      xacThucGiaoDich(request, response);
     }
   }
 
@@ -88,7 +95,6 @@ public class homeController extends HttpServlet {
       userDAO uDAO = new userDAO();
       accountDAO accountDAO = new accountDAO();
       beneficiariesDAO beneficiariesDAO = new beneficiariesDAO();
-      transactionsDAO tDAO = new transactionsDAO();
       loansDAO lDAO = new loansDAO();
       servicesDAO svDAO = new servicesDAO();
       savingDAO savDAO = new savingDAO();
@@ -97,7 +103,6 @@ public class homeController extends HttpServlet {
       if (us != null && us.getType_user().equals("user")) {
         account ac = accountDAO.getAccountByUserId(String.valueOf(us.getUser_id()));
         beneficiaries be = beneficiariesDAO.getAccountByUserId(String.valueOf(us.getUser_id()));
-        ArrayList<transactions> tr = tDAO.getAccountByUserId(String.valueOf((ac.getAccount_id())));
         ArrayList<loans> l = lDAO.selectByUserId(String.valueOf(us.getUser_id()));
         ArrayList<services> sv = svDAO.selectAll();
         ArrayList<saving> sav = savDAO.selectByUserId(String.valueOf(ac.getAccount_id()));
@@ -105,7 +110,6 @@ public class homeController extends HttpServlet {
         session.setAttribute("us", us);
         session.setAttribute("ac", ac);
         session.setAttribute("be", be);
-        session.setAttribute("tr", tr);
         session.setAttribute("l", l);
         session.setAttribute("sv", sv);
         session.setAttribute("sav", sav);
@@ -176,11 +180,12 @@ public class homeController extends HttpServlet {
           c.setTime(todayDate);
           c.add(Calendar.MINUTE,5);
           Date thoiGianHieuLucXacThuc = new Date(c.getTimeInMillis());
-
           boolean trangThaiXacThuc = false;
+          SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+          String thoiGianHieuLucXacThucStr = sdf.format(thoiGianHieuLucXacThuc);
 
           u.setVerification_code(soNgauNhien);
-          u.setCode_validity_period(thoiGianHieuLucXacThuc.toString());
+          u.setCode_validity_period(thoiGianHieuLucXacThucStr);
           u.setAuthentication_status(trangThaiXacThuc);
 
           if (uDAO.updateverifyInformation(u) > 0) {
@@ -337,7 +342,9 @@ public class homeController extends HttpServlet {
           user u = new user(us.getUser_id());
           userDAO uDAO = new userDAO();
           u.setVerification_code(soNgauNhien);
-          u.setCode_validity_period(thoiGianHieuLucXacThuc.toString());
+          SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+          String thoiGianHieuLucXacThucStr = sdf.format(thoiGianHieuLucXacThuc);
+          u.setCode_validity_period(thoiGianHieuLucXacThucStr);
           if (uDAO.updateverifyInformation2(u) > 0) {
             Email.sendEmail(us.getEmail(), "Mã Xác Thực", getMaDoiMatKhau(us));
           }
@@ -361,44 +368,81 @@ public class homeController extends HttpServlet {
   private void doiMatKhau(HttpServletRequest request, HttpServletResponse response) {
     try {
       String verification_code = request.getParameter("verification-code");
-
       String baoLoi = "";
       HttpSession session = request.getSession();
       user us = (user) session.getAttribute("us");
 
       if (us == null) {
         baoLoi = "Vui lòng đăng nhập.";
-      } else if (verification_code == null || !verification_code.equals(us.getVerification_code())) {
-        baoLoi = "Mã xác nhận không đúng.";
-      }
-      if (baoLoi.isEmpty()) {
-        String newpassword = (String) session.getAttribute("new-password");
-        String confirmpassword = (String) session.getAttribute("confirm-password");
+      } else {
+        String validityPeriodStr = us.getCode_validity_period();
+        LocalDateTime codeCreationTime = null;
 
-        if (newpassword == null || confirmpassword == null || !newpassword.equals(confirmpassword)) {
-          baoLoi = "Mật khẩu xác nhận không khớp.";
+        // Kiểm tra nếu validityPeriodStr null
+        if (validityPeriodStr != null) {
+          try {
+            // Thử phân tích theo định dạng đầy đủ (có ngày và thời gian)
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
+            codeCreationTime = LocalDateTime.parse(validityPeriodStr, formatter);
+          } catch (DateTimeParseException e) {
+            try {
+              // Nếu chỉ có thời gian (HH:mm:ss), giả định ngày hiện tại
+              DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+              LocalTime time = LocalTime.parse(validityPeriodStr, timeFormatter);
+              LocalDate today = LocalDate.now();
+              codeCreationTime = LocalDateTime.of(today, time);
+            } catch (DateTimeParseException ex) {
+              baoLoi = "Thời gian mã xác thực không hợp lệ.";
+            }
+          }
         } else {
-          us.setPassword(MaHoa.toSHA1(newpassword));
-          us.setComfirm_password(MaHoa.toSHA1(confirmpassword));
-          userDAO uDAO = new userDAO();
-          uDAO.updatePassword(us);
-          baoLoi = "Đổi mật khẩu thành công";
+          baoLoi = "Thời gian mã xác thực không tồn tại.";
+        }
 
-          // Xóa dữ liệu nhạy cảm khỏi session
-          session.removeAttribute("new-password");
-          session.removeAttribute("confirm-password");
-          session.removeAttribute("verification-code");
+        // Kiểm tra mã xác thực và thời gian hợp lệ
+        LocalDateTime now = LocalDateTime.now();
+        if (baoLoi.isEmpty()) {
+          if (verification_code == null || !verification_code.equals(us.getVerification_code())) {
+            baoLoi = "Mã xác nhận không đúng.";
+          } else if (codeCreationTime != null && Duration.between(codeCreationTime, now).toMinutes() > 5) {
+            baoLoi = "Mã xác nhận đã hết hạn. Vui lòng yêu cầu mã mới.";
+          }
+        }
 
+        // Xử lý đổi mật khẩu nếu không có lỗi
+        if (baoLoi.isEmpty()) {
+          String newpassword = (String) session.getAttribute("new-password");
+          String confirmpassword = (String) session.getAttribute("confirm-password");
+
+          if (newpassword == null || confirmpassword == null || !newpassword.equals(confirmpassword)) {
+            baoLoi = "Mật khẩu xác nhận không khớp.";
+          } else {
+            // Cập nhật mật khẩu
+            us.setPassword(MaHoa.toSHA1(newpassword));
+            us.setComfirm_password(MaHoa.toSHA1(confirmpassword));
+            userDAO uDAO = new userDAO();
+            uDAO.updatePassword(us);
+            baoLoi = "Đổi mật khẩu thành công";
+
+            // Xóa dữ liệu nhạy cảm khỏi session
+            session.removeAttribute("new-password");
+            session.removeAttribute("confirm-password");
+            session.removeAttribute("verification-code");
+          }
         }
       }
+
+      // Chuyển hướng đến trang thông báo
       request.setAttribute("baoLoi", baoLoi);
       RequestDispatcher rd = getServletContext().getRequestDispatcher("/userPage/privatePage.jsp");
       rd.forward(request, response);
       System.out.println(baoLoi);
+
     } catch (IOException | ServletException e) {
       e.printStackTrace();
     }
   }
+
 
   private void doiThongTinCaNhan(HttpServletRequest request, HttpServletResponse response) {
     try {
@@ -462,6 +506,7 @@ public class homeController extends HttpServlet {
       String account_name = request.getParameter("account_name");
       String account_amount = request.getParameter("account_amount");
       String description = request.getParameter("description");
+      String password = request.getParameter("password_transaction");
 
       String baoLoi = "";
       if (account_number == null || account_number.isEmpty() ||
@@ -471,43 +516,141 @@ public class homeController extends HttpServlet {
       }
 
       HttpSession session = request.getSession();
-      account ac = (account) session.getAttribute("ac");
-      beneficiaries be = (beneficiaries) session.getAttribute("be");
+      user us = (user) session.getAttribute("us");
+      userDAO uDAO = new userDAO();
       accountDAO aDAO = new accountDAO();
-      transactionsDAO tDAO = new transactionsDAO();
-      transactions tran, tran2;
-      Random random = new Random();
-      System.out.println(ac.getAccount_id());
-      System.out.println(be.getBeneficiary_id());
-      account objacc = aDAO.getAccountByAccountNumber(account_number);
-      int transaction_id = 100000000 + random.nextInt(900000000);
-      int transaction_id2 = 100000000 + random.nextInt(900000000);
+      password = MaHoa.toSHA1(password);
+      if (!password.equals(us.getPassword())) {
+        baoLoi = "Mat khau khong chinh xac";
+      }
       if (baoLoi.isEmpty()) {
-          if (aDAO.checkBalance(ac.getAccount_id(), account_amount)) {
-            aDAO.updateBalanceMinius(ac.getAccount_number(), account_amount);
-            aDAO.updateBalancePlus(account_number, account_amount);
-            tran = new transactions(transaction_id, ac.getAccount_id(), "Giao dịch", account_amount, String.valueOf(LocalDateTime.now()) ,be.getBeneficiary_id(), true, description, false);
-            tran2 = new transactions(transaction_id2, objacc.getAccount_id(), "Giao dịch", account_amount, String.valueOf(LocalDateTime.now()) ,be.getBeneficiary_id(), true, description, true);
-            tDAO.insert(tran);
-            tDAO.insert(tran2);
-            baoLoi = "Giao dịch thành công";
-          } else {
-            tran = new transactions(transaction_id, ac.getAccount_id(), "Giao dịch", account_amount, String.valueOf(LocalDateTime.now()) ,be.getBeneficiary_id(), false, description, false);
-            tDAO.insert(tran);
-            baoLoi = "Số dư không đủ";
-          }
+        String soNgauNhien = SoNgauNhien.getSoNgauNhien();
+        Date todayDate = new Date(new java.util.Date().getTime());
+        Calendar c = Calendar.getInstance();
+        c.setTime(todayDate);
+        c.add(Calendar.MINUTE,5);
+        Date thoiGianHieuLucXacThuc = new Date(c.getTimeInMillis());
+
+        session.setAttribute("us", us);
+        user u = new user(us.getUser_id());
+        u.setVerification_code(soNgauNhien);
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String thoiGianHieuLucXacThucStr = sdf.format(thoiGianHieuLucXacThuc);
+        u.setCode_validity_period(thoiGianHieuLucXacThucStr);
+        if (uDAO.updateverifyInformation2(u) > 0) {
+          Email.sendEmail(us.getEmail(), "Mã Xác Thực", getMaDoiMatKhau(us));
+          baoLoi = "Mã xác thực đã được gửi qua email.";
+        }
+
+        session.setAttribute("account_number", account_number);
+        session.setAttribute("account_name", account_name);
+        session.setAttribute("account_amount", account_amount);
+        session.setAttribute("description", description);
       }
       System.out.println(baoLoi);
-      request.setAttribute("baoLoi", baoLoi);
-      String destinationPage = "/userPage/thanhCong.jsp";
-      if (!baoLoi.equals("Giao dịch thành công")) {
-        destinationPage = "/userPage/thatBai.jsp";
+      String destinationPage = "/userPage/xacThucGiaoDich.jsp";
+      if (!baoLoi.equals("Mã xác thực đã được gửi qua email.")) {
+        destinationPage = "/userPage/transaction.jsp";
       }
+      request.setAttribute("baoLoi", baoLoi);
       RequestDispatcher rd = getServletContext().getRequestDispatcher(destinationPage);
       rd.forward(request, response);
     } catch (ServletException e) {
       e.printStackTrace();
     } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
+
+  private void xacThucGiaoDich(HttpServletRequest request, HttpServletResponse response) {
+    try {
+      String verification_code = request.getParameter("verification-code");
+      String baoLoi = "";
+      HttpSession session = request.getSession();
+      user us = (user) session.getAttribute("us");
+
+      if (us == null) {
+        baoLoi = "Vui lòng đăng nhập.";
+      } else {
+        String validityPeriodStr = us.getCode_validity_period();
+        LocalDateTime codeCreationTime = null;
+
+        // Kiểm tra định dạng chuỗi thời gian
+        try {
+          // Thử phân tích theo định dạng đầy đủ
+          DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
+          codeCreationTime = LocalDateTime.parse(validityPeriodStr, formatter);
+        } catch (DateTimeParseException e) {
+          // Nếu phân tích không thành công, giả sử chuỗi chỉ có thời gian và thêm ngày hiện tại
+          DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+          LocalTime time = LocalTime.parse(validityPeriodStr, timeFormatter);
+          LocalDate today = LocalDate.now();
+          codeCreationTime = LocalDateTime.of(today, time);
+        }
+
+        LocalDateTime now = LocalDateTime.now();
+
+        if (verification_code == null || !verification_code.equals(us.getVerification_code())) {
+          baoLoi = "Mã xác nhận không đúng.";
+        } else if (Duration.between(codeCreationTime, now).toMinutes() > 5) {
+          baoLoi = "Mã xác nhận đã hết hạn. Vui lòng yêu cầu mã mới.";
+        }
+
+        if (baoLoi.isEmpty()) {
+          String account_number = (String) session.getAttribute("account_number");
+          String account_name = (String) session.getAttribute("account_name");
+          String account_amount = (String) session.getAttribute("account_amount");
+          String description = (String) session.getAttribute("description");
+
+          if (account_number == null || account_name == null || account_amount == null || description == null) {
+            baoLoi = "Vui lòng điền đầy đủ thông tin.";
+          } else {
+            // Thực hiện giao dịch
+            accountDAO aDAO = new accountDAO();
+            account ac = (account) session.getAttribute("ac");
+            beneficiaries be = (beneficiaries) session.getAttribute("be");
+            transactionsDAO tDAO = new transactionsDAO();
+            transactions tran, tran2;
+            Random random = new Random();
+            account objacc = aDAO.getAccountByAccountNumber(account_number);
+            int transaction_id = 100000000 + random.nextInt(900000000);
+            int transaction_id2 = 100000000 + random.nextInt(900000000);
+
+            if (aDAO.checkBalance(ac.getAccount_id(), account_amount)) {
+              aDAO.updateBalanceMinius(ac.getAccount_number(), account_amount);
+              aDAO.updateBalancePlus(account_number, account_amount);
+              tran = new transactions(transaction_id, ac.getAccount_id(), "Giao dịch", account_amount, String.valueOf(LocalDateTime.now()), be.getBeneficiary_id(), true, description, false);
+              tran2 = new transactions(transaction_id2, objacc.getAccount_id(), "Giao dịch", account_amount, String.valueOf(LocalDateTime.now()), be.getBeneficiary_id(), true, description, true);
+              tDAO.insert(tran);
+              tDAO.insert(tran2);
+              baoLoi = "Giao dịch thành công";
+            } else {
+              tran = new transactions(transaction_id, ac.getAccount_id(), "Giao dịch", account_amount, String.valueOf(LocalDateTime.now()), be.getBeneficiary_id(), false, description, false);
+              tDAO.insert(tran);
+              baoLoi = "Số dư không đủ";
+            }
+
+            // Xóa dữ liệu nhạy cảm khỏi session
+            session.removeAttribute("account_number");
+            session.removeAttribute("account_name");
+            session.removeAttribute("verification_code");
+            session.removeAttribute("account_amount");
+            session.removeAttribute("description");
+          }
+
+          // Điều hướng trang đến kết quả
+          String destinationPage = "/userPage/thanhCong.jsp";
+          if (!baoLoi.equals("Giao dịch thành công")) {
+            destinationPage = "/userPage/thatBai.jsp";
+          }
+          System.out.println(baoLoi);
+          request.setAttribute("baoLoi", baoLoi);
+          RequestDispatcher rd = getServletContext().getRequestDispatcher(destinationPage);
+          rd.forward(request, response);
+        }
+      }
+    } catch (IOException | ServletException e) {
       e.printStackTrace();
     }
   }

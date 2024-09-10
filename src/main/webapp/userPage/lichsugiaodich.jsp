@@ -2,6 +2,9 @@
 <%@ page import="model.transactions" %>
 <%@ page import="java.util.Collections" %>
 <%@ page import="java.util.Comparator" %>
+<%@ page import="java.util.ArrayList" %>
+<%@ page import="dao.transactionsDAO" %>
+<%@ page import="dao.accountDAO" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
@@ -16,6 +19,10 @@
     <div class="header">Lịch Sử Giao Dịch</div>
     <%
         response.setIntHeader("Refresh", 5);
+        transactionsDAO tDAO = new transactionsDAO();
+        ArrayList<transactions> tr = tDAO.getAccountByUserId(String.valueOf((a.getAccount_id())));
+        session.setAttribute("tr", tr);
+
 
         Object objtr = session.getAttribute("tr");
         List<transactions> transactionList = null;

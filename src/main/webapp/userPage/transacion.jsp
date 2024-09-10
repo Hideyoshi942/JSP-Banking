@@ -18,18 +18,33 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="/JSP_Banking_war/assets/css/userCss/transaction.css"/>
     <script>
-      // Hiển thị modal nhập mật khẩu
       function showPasswordModal() {
-        var modal = document.getElementById("passwordModal");
-        modal.classList.add("show");
+        var accountNumber = document.getElementById("accountNumber").value;
+        var recipientName = document.getElementById("recipientName").value;
+        var amount = document.getElementById("amount").value;
+        var description = document.getElementById("description").value;
+
+        if (accountNumber.trim() !== "" && recipientName.trim() !== "" && amount.trim() !== "" && description.trim() !== "") {
+          var modal = document.getElementById("passwordModal");
+          modal.classList.add("show");
+        } else {
+          alert("Vui lòng điền đầy đủ thông tin trước khi thực hiện giao dịch.");
+        }
       }
 
-      // Đóng modal
       function closeModal() {
         var modal = document.getElementById("passwordModal");
         modal.classList.remove("show");
       }
 
+      function confirmTransaction() {
+        var password = document.getElementById("password_transaction").value;
+        if (password.trim() === "") {
+          alert("Vui lòng nhập mật khẩu");
+        } else {
+          document.getElementById("transactionForm").submit();
+        }
+      }
     </script>
 </head>
 
@@ -93,8 +108,18 @@
         </div>
         <!-- Nút Submit -->
         <button type="button" class="btn btn-primary" onclick="showPasswordModal()">
-        <i class="fa-solid fa-paper-plane"></i> Giao Dịch
-    </button>
+            <i class="fa-solid fa-paper-plane"></i> Giao Dịch
+        </button>
+        <!-- Modal nhập mật khẩu -->
+        <div id="passwordModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal()">&times;</span>
+                <h3>Nhập mật khẩu của bạn</h3>
+                <input type="password" name="password_transaction" class="form-control" id="password_transaction" placeholder="Nhập mật khẩu" required>
+                <button type="button" class="btn btn-primary" onclick="confirmTransaction()">Xác Nhận</button>
+                <button type="button" class="btn btn-secondary" onclick="closeModal()">Hủy</button>
+            </div>
+        </div>
     </form>
     <%
             } catch (NumberFormatException e) {
@@ -106,19 +131,6 @@
     %>
 </div>
 
-<!-- Modal nhập mật khẩu -->
-<div id="passwordModal" class="modal">
-    <div class="modal-content">
-        <span class="close" onclick="closeModal()">&times;</span>
-        <h3>Nhập mật khẩu của bạn</h3>
-        <input type="password" class="form-control" id="password" placeholder="Nhập mật khẩu">
-        <button type="button" class="btn btn-primary" onclick="confirmTransaction()">Xác Nhận</button>
-        <button type="button" class="btn btn-secondary" onclick="closeModal()">Hủy</button>
-    </div>
-</div>
-
-
 </body>
-
 </html>
 

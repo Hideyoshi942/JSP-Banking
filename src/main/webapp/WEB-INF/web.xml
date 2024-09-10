@@ -14,7 +14,11 @@
     <servlet-name>homeController</servlet-name>
     <url-pattern>/JSP</url-pattern>
   </servlet-mapping>
-  
+
+  <session-config>
+    <session-timeout>5</session-timeout>
+  </session-config>
+
   <!-- Error Exception-->
   <error-page>
     <error-code>404</error-code>
