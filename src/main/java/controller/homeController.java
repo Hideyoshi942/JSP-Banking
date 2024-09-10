@@ -7,7 +7,6 @@ import dao.savingDAO;
 import dao.servicesDAO;
 import dao.transactionsDAO;
 import dao.userDAO;
-import java.io.PrintWriter;
 import java.sql.Date;
 import java.time.Duration;
 import java.time.LocalDate;
@@ -17,7 +16,6 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Objects;
 import java.util.Random;
 import javax.servlet.*;
 import javax.servlet.http.*;
@@ -225,50 +223,75 @@ public class homeController extends HttpServlet {
       String verification_code = request.getParameter("verification_code");
 
       userDAO uDAO = new userDAO();
-
       user u = new user();
       u.setUser_id(user_id);
       user us = uDAO.selectById(u);
+
       account ac = new account();
       accountDAO aDAO = new accountDAO();
       beneficiaries be = new beneficiaries();
       beneficiariesDAO beDAO = new beneficiariesDAO();
+
       String msg = "";
       if (us != null) {
-        if (us.getVerification_code().equals(verification_code)) {
-          us.setAuthentication_status(true);
-          uDAO.updateverifyInformation(us);
-          Random rd = new Random();
-          int account_id = 100000000 + rd.nextInt(900000000);
-          long account_number = 1000000000000000L + (long)(rd.nextDouble() * 9000000000000000L);
-          ac.setUser_id_account(user_id);
-          ac.setAccount_id(account_id);
-          ac.setAccount_number(String.valueOf(account_number));
-          ac.setAccount_type("Thanh toán");
-          ac.setBalance("0");
-          ac.setCreated_at(LocalDateTime.now().toString());
-          ac.setState(true);
-          be.setBeneficiary_id(account_id);
-          be.setUser_id_beneficiari(user_id);
-          be.setName(us.getUsername());
-          be.setAccount_number(String.valueOf(account_number));
-          be.setBank_name("JSP-Banking");
-          aDAO.insert(ac);
-          beDAO.insert(be);
-          msg = "Xac thuc thanh cong!";
-        } else {
-          msg = "Ma xac thuc khong dung!";
+        LocalDateTime codeCreationTime = null;
+        try {
+          // Giả sử `code_creation_time` lưu ở định dạng chuẩn `HH:mm:ss`
+          codeCreationTime = LocalDateTime.parse(us.getCode_validity_period(), DateTimeFormatter.ofPattern("HH:mm:ss"));
+        } catch (DateTimeParseException e) {
+          msg = "Thời gian tạo mã xác thực không hợp lệ!";
+        }
+
+        if (codeCreationTime != null) {
+          LocalDateTime now = LocalDateTime.now();
+          long minutesElapsed = Duration.between(codeCreationTime, now).toMinutes();
+
+          // Kiểm tra nếu mã xác thực đã quá 5 phút kể từ thời điểm tạo
+          if (minutesElapsed > 5) {
+            msg = "Mã xác thực đã hết hạn!";
+          } else {
+            // Kiểm tra mã xác thực
+            if (us.getVerification_code().equals(verification_code)) {
+              us.setAuthentication_status(true);
+              uDAO.updateverifyInformation(us);
+
+              Random rd = new Random();
+              int account_id = 100000000 + rd.nextInt(900000000);
+              long account_number = 1000000000000000L + (long)(rd.nextDouble() * 9000000000000000L);
+
+              ac.setUser_id_account(user_id);
+              ac.setAccount_id(account_id);
+              ac.setAccount_number(String.valueOf(account_number));
+              ac.setAccount_type("Thanh toán");
+              ac.setBalance("0");
+              ac.setCreated_at(LocalDateTime.now().toString());
+              ac.setState(true);
+
+              be.setBeneficiary_id(account_id);
+              be.setUser_id_beneficiari(user_id);
+              be.setName(us.getUsername());
+              be.setAccount_number(String.valueOf(account_number));
+              be.setBank_name("JSP-Banking");
+
+              aDAO.insert(ac);
+              beDAO.insert(be);
+
+              msg = "Xác thực thành công!";
+            } else {
+              msg = "Mã xác thực không đúng!";
+            }
+          }
         }
       } else {
-        msg = "Tai khoan khong ton tai!";
+        msg = "Tài khoản không tồn tại!";
       }
+
       String url = "/userPage/congratulation.jsp";
       request.setAttribute("baoLoi", msg);
       RequestDispatcher rd = getServletContext().getRequestDispatcher(url);
       rd.forward(request, response);
-    } catch (ServletException e) {
-      e.printStackTrace();
-    } catch (IOException e) {
+
+    } catch (ServletException | IOException e) {
       e.printStackTrace();
     }
   }
@@ -442,7 +465,6 @@ public class homeController extends HttpServlet {
       e.printStackTrace();
     }
   }
-
 
   private void doiThongTinCaNhan(HttpServletRequest request, HttpServletResponse response) {
     try {
