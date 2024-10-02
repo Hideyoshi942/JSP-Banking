@@ -51,7 +51,7 @@ Sau khi cài đặt thành công, bạn có thể truy cập ứng dụng qua tr
 
 ## Hình ảnh
 
-![Screenshot 2024-07-31 004951](https://github.com/user-attachments/assets/d2f04030-4365-4f6e-80a3-f26adca06439)
+![Screenshot 2024-10-02 225732](https://github.com/user-attachments/assets/7df399aa-eebb-4778-9d23-5a2228f73ac1)
 
 
 ## Liên hệ
