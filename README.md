@@ -1,59 +1,58 @@
-# Website JSP-Banking
+# JSP-Banking Website
 
-Chào mừng bạn đến với dự án Website Ngân Hàng Trực Tuyến. Đây là một ứng dụng web cho phép người dùng quản lý tài khoản ngân hàng, xem lịch sử giao dịch, chuyển tiền và nhiều tính năng khác, tất cả đều có thể thực hiện dễ dàng trên trình duyệt.
+Welcome to the Online Banking Website project. This is a web application that allows users to manage their bank accounts, view transaction history, transfer money, and many other features — all easily accessible through a web browser.
 
-## Mục lục
+## Table of Contents
 
-- [Tính năng](#tính-năng)
-- [Công nghệ sử dụng](#công-nghệ-sử-dụng)
-- [Cài đặt](#cài-đặt)
-- [Sử dụng](#sử-dụng)
-- [Hình ảnh](#hình-ảnh)
-- [Liên hệ](#liên-hệ)
+- [Features](#features)
+- [Technologies Used](#technologies-used)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Screenshots](#screenshots)
+- [Contact](#contact)
 
-## Tính năng
+## Features
 
-- **Quản lý tài khoản**: Người dùng có thể xem và quản lý thông tin tài khoản ngân hàng của mình.
-- **Lịch sử giao dịch**: Xem chi tiết lịch sử giao dịch với các tùy chọn lọc và sắp xếp.
-- **Chuyển tiền**: Chuyển tiền giữa các tài khoản một cách an toàn và bảo mật.
-- **Xác thực**: Hệ thống đăng nhập và đăng ký an toàn với xác thực hai yếu tố.
-- **Giao diện tương thích**: Giao diện đáp ứng tốt trên cả máy tính và thiết bị di động.
+- **Account Management**: Users can view and manage their bank account information.
+- **Transaction History**: View detailed transaction history with filter and sort options.
+- **Money Transfer**: Safely and securely transfer money between accounts.
+- **Authentication**: Secure login and registration system with two-factor authentication.
+- **Responsive UI**: Responsive interface that works well on both desktop and mobile devices.
 
-## Công nghệ sử dụng
+## Technologies Used
 
 - **Frontend**:
-    - HTML, CSS, Bootstrap5
-    - JavaScript
-    - JSP cho việc render nội dung động
+  - HTML, CSS, Bootstrap 5
+  - JavaScript
+  - JSP for dynamic content rendering
 
 - **Backend**:
-    - Java Servlet
-    - MySQL cho cơ sở dữ liệu
+  - Java Servlet
+  - MySQL for database management
 
-## Cài đặt
+## Installation
 
-Để cài đặt và chạy dự án trên máy của bạn, hãy làm theo các bước sau:
+To install and run the project on your local machine, follow these steps:
 
-1. **Clone repository**:
+1. **Clone the repository**:
     ```bash
-    https://github.com/Hideyoshi942/JSP-Banking
+    git clone https://github.com/Hideyoshi942/JSP-Banking
     ```
 
-2. **Cấu hình cơ sở dữ liệu**:
-    - Tạo cơ sở dữ liệu MySQL và cập nhật thông tin kết nối trong file entity.txt.
+2. **Configure the database**:
+   - Create a MySQL database and update the connection details in the `entity.txt` file.
 
-3. **Chạy ứng dụng**:
-   Tomcat Server
+3. **Run the application**:
+   - Use a Tomcat Server to deploy the project.
 
-## Sử dụng
+## Usage
 
-Sau khi cài đặt thành công, bạn có thể truy cập ứng dụng qua trình duyệt tại `http://localhost:8080`. Đăng ký tài khoản và bắt đầu quản lý tài khoản ngân hàng của bạn.
+After successful installation, open your browser and go to `http://localhost:8080`. Register an account and start managing your bank account.
 
-## Hình ảnh
+## Screenshots
 
 ![Screenshot 2024-10-02 225732](https://github.com/user-attachments/assets/7df399aa-eebb-4778-9d23-5a2228f73ac1)
 
+## Contact
 
-## Liên hệ
-
-Nếu bạn có bất kỳ câu hỏi nào, vui lòng liên hệ qua email: unclekiet2424@gmail.com
+If you have any questions, feel free to contact via email: [unclekiet2424@gmail.com](mailto:unclekiet2424@gmail.com)
